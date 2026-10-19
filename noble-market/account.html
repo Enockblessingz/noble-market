@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account | Noble Market</title>
+  <link rel="icon" type="image/jpg" href="Noble's logo.jpg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1d293d',
+            'primary-light': '#24364f',
+            secondary: '#3b82f6',
+            third: '#f63b3b',
+          }
+        }
+      }
+    };
+  </script>
+  <!-- Lucide icons — same icon set umukamezi.com uses -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-gray-50">
+
+<div class="flex h-screen bg-gray-50">
+
+  <!-- ══════════════════════ SIDEBAR ══════════════════════ -->
+  <aside id="sidebar"
+         class="fixed lg:static top-0 left-0 h-full w-64 bg-white border-r border-gray-200 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
+
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center gap-2 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors">
+      <img src="Noble's logo.jpg" alt="Noble Market"
+           class="h-9 w-9 rounded object-cover flex-shrink-0"
+           onerror="this.style.display='none'">
+      <span class="font-bold text-primary tracking-tight uppercase text-sm">Noble Market</span>
+    </a>
+
+    <!-- User -->
+    <div class="p-6 border-b border-gray-200 flex items-center gap-3">
+      <div id="userAvatar"
+           class="h-9 w-9 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm flex-shrink-0 overflow-hidden">
+        <i data-lucide="user" class="w-4 h-4"></i>
+      </div>
+      <div class="min-w-0">
+        <p id="userName" class="text-sm font-semibold text-gray-900 truncate">Loading…</p>
+        <p id="userEmail" class="text-xs text-gray-500 truncate">—</p>
+      </div>
+    </div>
+
+    <!-- Primary nav -->
+    <nav class="mt-4 flex-1 overflow-y-auto">
+      <button data-view="overview" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+        <span class="font-medium">Overview</span>
+      </button>
+      <button data-view="orders" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+        <span class="font-medium">My Orders</span>
+      </button>
+      <button data-view="billing" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="credit-card" class="w-5 h-5"></i>
+        <span class="font-medium">Billing</span>
+      </button>
+      <button data-view="profile" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="user" class="w-5 h-5"></i>
+        <span class="font-medium">Profile</span>
+      </button>
+
+      <div class="mt-4 pt-4 border-t border-gray-100">
+        <a href="index.html" class="w-full flex items-center gap-3 px-6 py-3 text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+          <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+          <span class="font-medium">Cart</span>
+        </a>
+        <button data-view="wishlist" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+          <i data-lucide="heart" class="w-5 h-5"></i>
+          <span class="font-medium">Wishlist</span>
+        </button>
+      </div>
+
+      <div class="mt-4 pt-4 border-t border-gray-100">
+        <a href="index.html" class="w-full flex items-center gap-3 px-6 py-3 text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+          <i data-lucide="log-in" class="w-5 h-5"></i>
+          <span class="font-medium">Back to Home</span>
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Mobile overlay -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
+
+  <!-- ══════════════════════ MAIN ══════════════════════ -->
+  <div class="flex-1 flex flex-col overflow-hidden min-w-0">
+
+    <!-- Top bar -->
+    <header class="bg-white border-b border-gray-200 px-4 py-4 flex-shrink-0">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <button id="menuBtn" class="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+          <h1 id="pageTitle" class="text-xl font-semibold text-gray-900">Overview</h1>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="bellBtn" class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Notifications">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+          </button>
+          <button id="logoutBtn" class="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            <span class="hidden sm:inline">Logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Scrollable content -->
+    <main class="flex-1 p-6 bg-gray-50 overflow-auto">
+
+      <!-- ═════════════ VIEW: OVERVIEW ═════════════ -->
+      <div id="view-overview" class="space-y-6">
+
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-1">Welcome back, <span id="welcomeName">there</span>!</h2>
+          <p class="text-gray-500 text-sm">Here's a quick look at your account.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Spent</p>
+            <p id="kpiSpent" class="text-2xl font-bold text-gray-900">RF 0</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Confirmed Orders</p>
+            <p id="kpiConfirmed" class="text-2xl font-bold text-green-600">0</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">All Orders</p>
+            <p id="kpiAll" class="text-2xl font-bold text-gray-900">0</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button data-view="orders" class="action-card bg-white border border-gray-200 rounded-xl p-5 text-left hover:border-gray-300 transition-colors">
+            <i data-lucide="shopping-bag" class="w-6 h-6 text-gray-700 mb-2"></i>
+            <p class="font-medium text-gray-900">View Orders</p>
+          </button>
+          <button data-view="profile" class="action-card bg-white border border-gray-200 rounded-xl p-5 text-left hover:border-gray-300 transition-colors">
+            <i data-lucide="user" class="w-6 h-6 text-gray-700 mb-2"></i>
+            <p class="font-medium text-gray-900">Edit Profile</p>
+          </button>
+          <button data-view="wishlist" class="action-card bg-white border border-gray-200 rounded-xl p-5 text-left hover:border-gray-300 transition-colors">
+            <i data-lucide="heart" class="w-6 h-6 text-gray-700 mb-2"></i>
+            <p class="font-medium text-gray-900">My Wishlist</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- ═════════════ VIEW: ORDERS ═════════════ -->
+      <div id="view-orders" class="hidden space-y-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-1">My Orders</h2>
+          <p class="text-gray-500 text-sm">Your purchase history from this device.</p>
+        </div>
+        <div id="ordersList" class="space-y-3"></div>
+      </div>
+
+      <!-- ═════════════ VIEW: BILLING ═════════════ -->
+      <div id="view-billing" class="hidden space-y-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-1">Billing</h2>
+          <p class="text-gray-500 text-sm">Manage your payment method and billing address.</p>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-xl p-6 max-w-xl">
+          <form id="billingForm" class="space-y-4" onsubmit="return saveBilling(event)">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <input id="billName" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+              <select id="billMethod" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                <option value="momo">Mobile Money (MoMo / Airtel)</option>
+                <option value="banking">Bank Transfer</option>
+                <option value="card">Card</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Phone / Account Number</label>
+              <input id="billAccount" type="tel" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary" placeholder="078xxxxxxxx">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <input id="billAddress" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                <input id="billCity" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                <input id="billCountry" type="text" required value="Rwanda" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+              </div>
+            </div>
+            <p id="billingMsg" class="text-sm hidden"></p>
+            <button type="submit" class="px-5 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg font-medium">
+              Save Billing
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ═════════════ VIEW: PROFILE ═════════════ -->
+      <div id="view-profile" class="hidden space-y-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-1">Edit Profile</h2>
+          <p class="text-gray-500 text-sm">Update your personal details.</p>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-xl p-6 max-w-xl">
+          <div class="flex flex-col items-center mb-6">
+            <div class="relative">
+              <div id="profileAvatar" class="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200">
+                <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+              </div>
+              <label class="absolute -bottom-1 -right-1 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary-light transition-colors">
+                <i data-lucide="camera" class="w-4 h-4"></i>
+                <input id="profilePicInput" type="file" accept="image/*" class="hidden" onchange="previewProfilePic(this)">
+              </label>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Click the camera icon to change your photo</p>
+          </div>
+
+          <form id="profileForm" class="space-y-4" onsubmit="return saveProfile(event)">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <input id="profFname" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <input id="profLname" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <input id="profPhone" type="tel" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary" placeholder="+250781234567">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <input id="profEmail" type="email" class="w-full px-3 py-2.5 border border-gray-200 bg-gray-50 text-gray-500 rounded-lg text-sm cursor-not-allowed" disabled>
+            </div>
+            <p id="profileMsg" class="text-sm hidden"></p>
+            <button type="submit" class="px-5 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg font-medium">
+              Save Changes
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ═════════════ VIEW: WISHLIST ═════════════ -->
+      <div id="view-wishlist" class="hidden space-y-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-1">My Wishlist</h2>
+          <p class="text-gray-500 text-sm">Products you've saved for later.</p>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-xl p-12 text-center">
+          <i data-lucide="heart" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+          <p class="text-gray-500 text-sm mb-4">Your wishlist is empty.</p>
+          <a href="index.html#/shop" class="inline-block px-5 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg font-medium text-sm">
+            Browse Products
+          </a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Floating chat button -->
+<button onclick="alert('Chat support coming soon')"
+        class="fixed bottom-4 right-4 w-14 h-14 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-800 transition-colors z-30"
+        aria-label="Chat with us">
+  <img src="Noble's logo.jpg" alt="" class="w-8 h-8 rounded-full object-cover" onerror="this.style.display='none'">
+</button>
+
+<script src="shared.js"></script>
+<script>
+/* ---------- Auth guard ---------- */
+if (!isLoggedIn()) {
+  sessionStorage.setItem('nm_redirect', 'account.html');
+  window.location.href = 'sign in.html';
+}
+
+/* ---------- Formatting ---------- */
+const fmtRF = (n) => new Intl.NumberFormat('en-RW', {
+  style: 'currency', currency: 'RWF', minimumFractionDigits: 0
+}).format(Number(n || 0));
+
+/* ---------- Bootstrap icons ---------- */
+if (window.lucide) lucide.createIcons();
+
+/* ---------- Populate user ---------- */
+const user = getUser() || {};
+const fullName = [user.fname, user.lname].filter(Boolean).join(' ') || user.name || user.email || 'Guest';
+
+document.getElementById('userName').textContent = fullName;
+document.getElementById('userEmail').textContent = user.email || user.phone || '—';
+document.getElementById('welcomeName').textContent = (user.fname || user.name || 'there');
+
+/* Avatar */
+function paintAvatar(el, src, size) {
+  el.innerHTML = '';
+  el.style.background = '#000';
+  if (src) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = fullName;
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'cover';
+    el.appendChild(img);
+  } else {
+    el.textContent = (user.fname || user.email || 'U').charAt(0).toUpperCase();
+    el.style.display = 'flex';
+    el.style.alignItems = 'center';
+    el.style.justifyContent = 'center';
+    el.style.fontWeight = '700';
+    el.style.fontSize = size || '14px';
+  }
+}
+paintAvatar(document.getElementById('userAvatar'), user.profile_pic, '14px');
+paintAvatar(document.getElementById('profileAvatar'), user.profile_pic, '32px');
+
+/* ---------- Prefill profile form ---------- */
+document.getElementById('profFname').value = user.fname || '';
+document.getElementById('profLname').value = user.lname || '';
+document.getElementById('profPhone').value = user.phone || '';
+document.getElementById('profEmail').value = user.email || '';
+document.getElementById('billName').value = fullName;
+document.getElementById('billAddress').value = user.address || '';
+document.getElementById('billCity').value = user.city || '';
+
+/* ---------- Load orders from localStorage ---------- */
+let orders = [];
+try { orders = JSON.parse(localStorage.getItem('nm_orders') || '[]'); } catch {}
+
+const confirmed = orders.filter(o => o.status === 'confirmed');
+const spent = confirmed.reduce((s, o) => s + Number(o.total || 0), 0);
+
+document.getElementById('kpiSpent').textContent = fmtRF(spent);
+document.getElementById('kpiConfirmed').textContent = confirmed.length;
+document.getElementById('kpiAll').textContent = orders.length;
+
+const ordersList = document.getElementById('ordersList');
+if (orders.length === 0) {
+  ordersList.innerHTML = `
+    <div class="bg-white border border-gray-200 rounded-xl p-12 text-center">
+      <i data-lucide="shopping-bag" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+      <p class="text-gray-500 text-sm mb-4">No orders yet.</p>
+      <a href="index.html#/shop" class="inline-block px-5 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg font-medium text-sm">
+        Browse Products
+      </a>
+    </div>`;
+} else {
+  ordersList.innerHTML = orders.map(o => `
+    <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-3">
+      <div>
+        <p class="font-mono text-xs text-gray-500">${escapeHtml(o.ref || o.id || '—')}</p>
+        <p class="text-sm font-semibold text-gray-900">${escapeHtml(o.date || '')}</p>
+        <p class="text-xs text-gray-500">${(o.items || []).length} item(s)</p>
+      </div>
+      <div class="text-right">
+        <p class="font-bold text-gray-900">${fmtRF(o.total)}</p>
+        <p class="text-xs ${o.status === 'confirmed' ? 'text-green-600' : 'text-yellow-600'} capitalize">${escapeHtml(o.status || 'pending')}</p>
+      </div>
+    </div>`).join('');
+}
+if (window.lucide) lucide.createIcons();
+
+/* ---------- View switching ---------- */
+const VIEWS = ['overview', 'orders', 'billing', 'profile', 'wishlist'];
+const TITLES = {
+  overview: 'Overview',
+  orders: 'My Orders',
+  billing: 'Billing',
+  profile: 'Profile',
+  wishlist: 'My Wishlist'
+};
+
+function switchView(name) {
+  if (!VIEWS.includes(name)) name = 'overview';
+
+  VIEWS.forEach(v => {
+    document.getElementById('view-' + v).classList.toggle('hidden', v !== name);
+  });
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    const active = btn.dataset.view === name;
+    btn.classList.toggle('bg-blue-50', active);
+    btn.classList.toggle('text-blue-700', active);
+    btn.classList.toggle('border-blue-600', active);
+    btn.classList.toggle('text-gray-600', !active);
+    btn.classList.toggle('border-transparent', !active);
+  });
+
+  document.getElementById('pageTitle').textContent = TITLES[name] || 'Overview';
+  closeSidebar();
+}
+
+document.querySelectorAll('[data-view]').forEach(el => {
+  el.addEventListener('click', () => switchView(el.dataset.view));
+});
+
+/* ---------- Mobile sidebar ---------- */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+function openSidebar() {
+  sidebar.classList.remove('-translate-x-full');
+  overlay.classList.remove('hidden');
+}
+function closeSidebar() {
+  sidebar.classList.add('-translate-x-full');
+  overlay.classList.add('hidden');
+}
+document.getElementById('menuBtn').addEventListener('click', openSidebar);
+overlay.addEventListener('click', closeSidebar);
+
+/* ---------- Logout ---------- */
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem('nm_auth');
+  window.location.href = 'index.html';
+});
+
+/* ---------- Bell ---------- */
+document.getElementById('bellBtn').addEventListener('click', () => {
+  alert('No new notifications.');
+});
+
+/* ---------- Profile pic preview ---------- */
+let pendingProfilePic = '';
+function previewProfilePic(input) {
+  const f = input.files && input.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    pendingProfilePic = reader.result;
+    paintAvatar(document.getElementById('profileAvatar'), pendingProfilePic, '32px');
+  };
+  reader.readAsDataURL(f);
+}
+
+/* ---------- Save profile ---------- */
+function saveProfile(e) {
+  e.preventDefault();
+  const u = getUser();
+  if (!u) return false;
+
+  u.fname = document.getElementById('profFname').value.trim();
+  u.lname = document.getElementById('profLname').value.trim();
+  u.phone = document.getElementById('profPhone').value.trim();
+  if (pendingProfilePic) u.profile_pic = pendingProfilePic;
+
+  localStorage.setItem('nm_user', JSON.stringify(u));
+
+  const msg = document.getElementById('profileMsg');
+  msg.textContent = '✅ Profile updated.';
+  msg.className = 'text-sm text-green-600';
+  msg.classList.remove('hidden');
+
+  document.getElementById('userName').textContent = [u.fname, u.lname].filter(Boolean).join(' ');
+  document.getElementById('userEmail').textContent = u.email || u.phone || '—';
+  document.getElementById('welcomeName').textContent = u.fname || 'there';
+  paintAvatar(document.getElementById('userAvatar'), u.profile_pic, '14px');
+
+  setTimeout(() => msg.classList.add('hidden'), 2500);
+  return false;
+}
+
+/* ---------- Save billing ---------- */
+function saveBilling(e) {
+  e.preventDefault();
+  const u = getUser();
+  if (!u) return false;
+
+  u.address = document.getElementById('billAddress').value.trim();
+  u.city = document.getElementById('billCity').value.trim();
+  u.country = document.getElementById('billCountry').value.trim();
+  u.billing_method = document.getElementById('billMethod').value;
+  localStorage.setItem('nm_user', JSON.stringify(u));
+
+  const msg = document.getElementById('billingMsg');
+  msg.textContent = '✅ Billing details saved.';
+  msg.className = 'text-sm text-green-600';
+  msg.classList.remove('hidden');
+  setTimeout(() => msg.classList.add('hidden'), 2500);
+  return false;
+}
+
+/* ---------- Boot ---------- */
+switchView('overview');
+</script>
+</body>
+</html>
