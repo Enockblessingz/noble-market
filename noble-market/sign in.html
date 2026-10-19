@@ -5,7 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign In | Noble Market</title>
   <link rel="icon" type="image/jpg" href="Noble's logo.jpg">
-  <link rel="stylesheet" href="assets/index.css">
+  <!-- Using Tailwind CDN since you don't have assets/index.css -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1d293d',
+            'primary-light': '#24364f',
+            secondary: '#3b82f6',
+            third: '#f63b3b',
+          }
+        }
+      }
+    };
+  </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -125,13 +140,27 @@ function handleSignIn(e) {
 
   if (!identifier || !pass) return showError('Enter your credentials.');
 
-  const user = getUser();
-  if (!user) return showError('No account found on this device. Please create one first.');
+  // 1. Get ALL users registered on this device
+  const allUsers = getAllUsers();
+  
+  if (allUsers.length === 0) {
+    return showError('No accounts found. Please create one first.');
+  }
 
-  const match = (user.email === identifier) || (user.phone === identifier);
-  if (!match || user.pass !== pass) return showError('Invalid email/phone or password.');
+  // 2. Find a user matching the email OR phone, AND the password
+  const user = allUsers.find(u => 
+    (u.email === identifier || u.phone === identifier) && u.pass === pass
+  );
 
+  if (!user) {
+    return showError('Invalid email/phone or password.');
+  }
+
+  // 3. Set this specific user as the currently active user
+  localStorage.setItem('nm_user', JSON.stringify(user));
   sessionStorage.setItem('nm_auth', 'true');
+  
+  // 4. Redirect to store
   window.location.href = 'index.html';
   return false;
 }
