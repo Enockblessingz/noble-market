@@ -3,156 +3,446 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin | Noble Market</title>
+  <title>Admin Dashboard | Noble Market</title>
   <link rel="icon" type="image/jpg" href="Noble's logo.jpg">
-  <link rel="stylesheet" href="assets/index.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1d293d',
+            'primary-light': '#24364f',
+            secondary: '#3b82f6',
+            third: '#f63b3b',
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .nav-active { background-color: #eff6ff; color: #1d4ed8; border-right: 3px solid #1d4ed8; }
+  </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-gray-50">
 
-<!-- Header -->
-<header class="bg-primary text-white border-b border-white/10">
-  <div class="max-w-full md:max-w-11/12 mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3 flex-wrap">
-    <a href="index.html" class="flex items-center gap-3">
-      <img src="Noble's logo.jpg" alt="Noble Market" class="w-10 h-10 rounded-full object-cover border border-white/20" onerror="this.style.display='none'">
+<div class="flex h-screen bg-gray-50 overflow-hidden">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col flex-shrink-0">
+    <a href="index.html" class="flex items-center gap-2 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors">
+      <img src="Noble's logo.jpg" alt="Logo" class="h-9 w-9 rounded object-cover flex-shrink-0" onerror="this.style.display='none'">
       <div>
-        <div class="font-bold text-lg">Noble Market — Admin</div>
-        <div class="text-xs text-white/70">Add products to the store</div>
+        <span class="font-bold text-primary tracking-tight uppercase text-sm block">Noble Market</span>
+        <span class="text-[10px] text-gray-500 font-semibold tracking-wider uppercase">Admin Panel</span>
       </div>
     </a>
-    <div class="flex items-center gap-2">
-      <a href="index.html" class="text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-        <i class="fas fa-store mr-1"></i> Store
-      </a>
-      <button id="logoutBtn" class="text-sm px-3 py-2 rounded-lg bg-third hover:bg-third/90 transition-colors">
-        <i class="fas fa-sign-out-alt mr-1"></i> Log out
+
+    <nav class="mt-4 flex-1 overflow-y-auto">
+      <button data-view="dashboard" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+        <span class="font-medium">Dashboard</span>
       </button>
-    </div>
-  </div>
-</header>
+      <button data-view="orders" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+        <span class="font-medium">All Orders</span>
+      </button>
+      <button data-view="users" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="users" class="w-5 h-5"></i>
+        <span class="font-medium">Customers</span>
+      </button>
+      <button data-view="products" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="package" class="w-5 h-5"></i>
+        <span class="font-medium">Inventory</span>
+      </button>
+      <button data-view="add-product" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="plus-square" class="w-5 h-5"></i>
+        <span class="font-medium">Add Product</span>
+      </button>
 
-<main class="max-w-full md:max-w-11/12 mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mt-4 pt-4 border-t border-gray-100">
+        <a href="index.html" class="w-full flex items-center gap-3 px-6 py-3 text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+          <i data-lucide="store" class="w-5 h-5"></i>
+          <span class="font-medium">Back to Store</span>
+        </a>
+      </div>
+    </nav>
+  </aside>
 
-  <h1 class="text-2xl md:text-3xl font-bold text-primary mb-6">Add New Product</h1>
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
 
-  <!-- Form -->
-  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8 mb-8">
-    <form id="productForm" onsubmit="return handleAddProduct(event)">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden min-w-0">
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button id="menuBtn" class="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <h1 id="pageTitle" class="text-xl font-semibold text-gray-900">Dashboard</h1>
+      </div>
+      <button id="logoutBtn" class="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
+        <i data-lucide="log-out" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">Log out</span>
+      </button>
+    </header>
 
-        <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Product Name</label>
-          <input id="productName" type="text" required
-                 placeholder="e.g. Samsung Galaxy A54"
-                 class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+    <main class="flex-1 p-6 bg-gray-50 overflow-y-auto">
+      
+      <!-- VIEW: DASHBOARD -->
+      <div id="view-dashboard" class="space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Revenue</p>
+            <p id="kpiRevenue" class="text-2xl font-bold text-gray-900">RF 0</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Orders</p>
+            <p id="kpiOrders" class="text-2xl font-bold text-gray-900">0</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Customers</p>
+            <p id="kpiCustomers" class="text-2xl font-bold text-gray-900">0</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Products (Custom)</p>
+            <p id="kpiProducts" class="text-2xl font-bold text-gray-900">0</p>
+          </div>
         </div>
 
-        <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Product Image</label>
-          <input id="productImage" type="file" accept="image/*" onchange="previewImage(this)"
-                 class="w-full text-sm text-gray-700 border border-gray-300 rounded-lg p-2 cursor-pointer">
-          <div id="imagePreview" class="mt-3 flex flex-wrap gap-2"></div>
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Orders</h2>
+          <div id="dashboardRecentOrders" class="overflow-x-auto"></div>
         </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Price (RWF)</label>
-          <input id="price" type="number" min="0" required placeholder="Enter price in RWF"
-                 class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Stock Quantity</label>
-          <input id="stock" type="number" min="0" required placeholder="Enter stock quantity"
-                 class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
-        </div>
-
-        <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Category</label>
-          <select id="category" required
-                  class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
-            <option value="">Select category</option>
-          </select>
-        </div>
-
-        <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-          <textarea id="description" rows="3" required placeholder="Write a short description…"
-                    class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm resize-none"></textarea>
-        </div>
-
       </div>
 
-      <button type="submit"
-              class="mt-6 w-full md:w-auto px-6 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors">
-        <i class="fas fa-plus mr-2"></i> Add Product
-      </button>
-    </form>
-  </div>
+      <!-- VIEW: ORDERS -->
+      <div id="view-orders" class="hidden space-y-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Order History</h2>
+          <div id="adminOrdersList" class="overflow-x-auto"></div>
+        </div>
+      </div>
 
-  <!-- List -->
-  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-bold text-primary">Your Custom Products (<span id="count">0</span>)</h2>
-      <button onclick="renderList()" class="text-sm px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50">
-        <i class="fas fa-sync-alt"></i>
-      </button>
-    </div>
-    <div id="list" class="space-y-3"></div>
-  </div>
+      <!-- VIEW: USERS -->
+      <div id="view-users" class="hidden space-y-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Registered Customers</h2>
+          <div id="adminUsersList" class="overflow-x-auto"></div>
+        </div>
+      </div>
 
-</main>
+      <!-- VIEW: PRODUCTS -->
+      <div id="view-products" class="hidden space-y-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Your Custom Products</h2>
+          <div id="adminProductsList" class="overflow-x-auto"></div>
+        </div>
+      </div>
+
+      <!-- VIEW: ADD PRODUCT -->
+      <div id="view-add-product" class="hidden max-w-2xl">
+        <div class="bg-white border border-gray-200 rounded-xl p-8">
+          <h2 class="text-lg font-semibold text-gray-900 mb-6">Add New Product</h2>
+          <form id="productForm" onsubmit="return handleAddProduct(event)" class="space-y-5">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Name</label>
+              <input id="pName" type="text" required placeholder="e.g. Samsung Galaxy A54" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Price (RWF)</label>
+                <input id="pPrice" type="number" min="0" required placeholder="50000" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Stock Quantity</label>
+                <input id="pStock" type="number" min="0" required placeholder="100" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
+              <select id="pCategory" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+                <option value="">Select category</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Image</label>
+              <input id="pImage" type="file" accept="image/*" onchange="previewProductImage(this)" class="w-full text-sm text-gray-700 border border-gray-300 rounded-lg p-2 cursor-pointer">
+              <div id="pImagePreview" class="mt-3"></div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
+              <textarea id="pDesc" rows="3" required placeholder="Write a short description…" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d] resize-none"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-[#1d293d] text-white rounded-lg font-semibold hover:bg-[#24364f] transition-colors">
+              Add Product to Store
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
 
 <script src="shared.js"></script>
 <script>
-/* Auth guard */
+/* ---------- Auth Guard ---------- */
 if (!isLoggedIn()) {
   sessionStorage.setItem('nm_redirect', 'admin.html');
   window.location.href = 'sign in.html';
 }
 
-/* Populate categories */
-const catSel = document.getElementById('category');
-CATEGORIES.forEach(c => {
-  const o = document.createElement('option');
-  o.value = c;
-  o.textContent = c;
-  catSel.appendChild(o);
-});
+// Initialize Product DB
+initDB();
 
-/* Image preview */
-let pendingImageDataUrl = '';
-function previewImage(input) {
-  const box = document.getElementById('imagePreview');
-  box.innerHTML = '';
-  const f = input.files && input.files[0];
-  if (!f) { pendingImageDataUrl = ''; return; }
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    pendingImageDataUrl = reader.result;
-    const img = document.createElement('img');
-    img.src = reader.result;
-    img.alt = 'Preview';
-    img.className = 'w-20 h-20 object-cover rounded-lg border border-gray-200';
-    box.appendChild(img);
-  };
-  reader.readAsDataURL(f);
+/* ---------- Formatting ---------- */
+const fmtRF = (n) => 'RF ' + Number(n || 0).toLocaleString();
+const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+/* ---------- View Switching ---------- */
+const VIEWS = ['dashboard', 'orders', 'users', 'products', 'add-product'];
+const TITLES = {
+  dashboard: 'Dashboard',
+  orders: 'All Orders',
+  users: 'Customers',
+  products: 'Inventory',
+  'add-product': 'Add Product'
+};
+
+function switchView(name) {
+  if (!VIEWS.includes(name)) name = 'dashboard';
+  VIEWS.forEach(v => document.getElementById('view-' + v).classList.add('hidden'));
+  document.getElementById('view-' + name).classList.remove('hidden');
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    const active = btn.dataset.view === name;
+    btn.classList.toggle('nav-active', active);
+    btn.classList.toggle('text-gray-600', !active);
+    btn.classList.toggle('hover:bg-gray-50', !active);
+  });
+
+  document.getElementById('pageTitle').textContent = TITLES[name];
+  closeSidebar();
+  
+  // Refresh data when switching views
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'orders') renderOrders();
+  if (name === 'users') renderUsers();
+  if (name === 'products') renderProducts();
 }
 
-/* Add product */
+document.querySelectorAll('.nav-btn').forEach(el => {
+  el.addEventListener('click', () => switchView(el.dataset.view));
+});
+
+/* ---------- Render: Dashboard ---------- */
+function renderDashboard() {
+  const orders = getAllOrders();
+  const users = getAllUsers();
+  const products = loadCustomProducts();
+  
+  const revenue = orders.filter(o => o.status === 'confirmed').reduce((s, o) => s + Number(o.total), 0);
+
+  document.getElementById('kpiRevenue').textContent = fmtRF(revenue);
+  document.getElementById('kpiOrders').textContent = orders.length;
+  document.getElementById('kpiCustomers').textContent = users.length;
+  document.getElementById('kpiProducts').textContent = products.length;
+
+  const recent = orders.slice(0, 5);
+  const container = document.getElementById('dashboardRecentOrders');
+  
+  if (recent.length === 0) {
+    container.innerHTML = `<p class="text-gray-500 text-sm py-4">No orders yet.</p>`;
+  } else {
+    container.innerHTML = `
+      <table class="w-full text-sm text-left">
+        <thead class="bg-gray-50 text-gray-500 border-b border-gray-200">
+          <tr>
+            <th class="px-4 py-3 font-medium">Ref</th>
+            <th class="px-4 py-3 font-medium">Customer</th>
+            <th class="px-4 py-3 font-medium">Date</th>
+            <th class="px-4 py-3 font-medium">Total</th>
+            <th class="px-4 py-3 font-medium">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          ${recent.map(o => `
+            <tr>
+              <td class="px-4 py-3 font-mono text-xs">${escapeHtml(o.ref)}</td>
+              <td class="px-4 py-3 text-gray-900">${escapeHtml(o.customerName)}</td>
+              <td class="px-4 py-3 text-gray-500">${fmtDate(o.date)}</td>
+              <td class="px-4 py-3 font-semibold">${fmtRF(o.total)}</td>
+              <td class="px-4 py-3"><span class="px-2 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium capitalize">${o.status}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+}
+
+/* ---------- Render: Orders ---------- */
+function renderOrders() {
+  const orders = getAllOrders();
+  const container = document.getElementById('adminOrdersList');
+
+  if (orders.length === 0) {
+    container.innerHTML = `<p class="text-gray-500 text-sm py-4">No orders have been placed yet.</p>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-500 border-b border-gray-200">
+        <tr>
+          <th class="px-4 py-3 font-medium">Reference</th>
+          <th class="px-4 py-3 font-medium">Customer</th>
+          <th class="px-4 py-3 font-medium">Email</th>
+          <th class="px-4 py-3 font-medium">Items</th>
+          <th class="px-4 py-3 font-medium">Total</th>
+          <th class="px-4 py-3 font-medium">Date</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        ${orders.map(o => `
+          <tr>
+            <td class="px-4 py-3 font-mono text-xs">${escapeHtml(o.ref)}</td>
+            <td class="px-4 py-3 font-medium text-gray-900">${escapeHtml(o.customerName)}</td>
+            <td class="px-4 py-3 text-gray-500">${escapeHtml(o.customerEmail)}</td>
+            <td class="px-4 py-3 text-gray-500">${o.items ? o.items.length : 0}</td>
+            <td class="px-4 py-3 font-semibold text-gray-900">${fmtRF(o.total)}</td>
+            <td class="px-4 py-3 text-gray-500">${fmtDate(o.date)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+/* ---------- Render: Users ---------- */
+function renderUsers() {
+  const users = getAllUsers();
+  const container = document.getElementById('adminUsersList');
+
+  if (users.length === 0) {
+    container.innerHTML = `<p class="text-gray-500 text-sm py-4">No customers registered yet.</p>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-500 border-b border-gray-200">
+        <tr>
+          <th class="px-4 py-3 font-medium">Name</th>
+          <th class="px-4 py-3 font-medium">Email</th>
+          <th class="px-4 py-3 font-medium">Phone</th>
+          <th class="px-4 py-3 font-medium">Joined</th>
+          <th class="px-4 py-3 font-medium">Role</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        ${users.map(u => `
+          <tr>
+            <td class="px-4 py-3 font-medium text-gray-900">${escapeHtml(u.fname)} ${escapeHtml(u.lname)}</td>
+            <td class="px-4 py-3 text-gray-500">${escapeHtml(u.email)}</td>
+            <td class="px-4 py-3 text-gray-500">${escapeHtml(u.phone || '—')}</td>
+            <td class="px-4 py-3 text-gray-500">${fmtDate(u.joined)}</td>
+            <td class="px-4 py-3"><span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">${escapeHtml(u.role)}</span></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+/* ---------- Render: Products ---------- */
+function renderProducts() {
+  const products = loadCustomProducts();
+  const container = document.getElementById('adminProductsList');
+
+  if (products.length === 0) {
+    container.innerHTML = `<p class="text-gray-500 text-sm py-4">No custom products added yet.</p>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-500 border-b border-gray-200">
+        <tr>
+          <th class="px-4 py-3 font-medium">Product</th>
+          <th class="px-4 py-3 font-medium">Category</th>
+          <th class="px-4 py-3 font-medium">Price</th>
+          <th class="px-4 py-3 font-medium">Stock</th>
+          <th class="px-4 py-3 font-medium">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        ${products.map(p => `
+          <tr>
+            <td class="px-4 py-3 flex items-center gap-3">
+              <img src="${escapeHtml(p.Product_Image_url)}" class="w-10 h-10 rounded object-cover border border-gray-200">
+              <span class="font-medium text-gray-900 truncate max-w-[200px]">${escapeHtml(p.Product_Name)}</span>
+            </td>
+            <td class="px-4 py-3 text-gray-500">${escapeHtml(p.Product_Category)}</td>
+            <td class="px-4 py-3 font-semibold text-gray-900">${fmtRF(p.Product_Price)}</td>
+            <td class="px-4 py-3 text-gray-500">${p.Product_Stock}</td>
+            <td class="px-4 py-3">
+              <button onclick="deleteProduct('${p.Product_Id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
+function deleteProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  removeCustomProduct(id);
+  renderProducts();
+  renderDashboard(); // Update KPI
+}
+
+/* ---------- Add Product Logic ---------- */
+let pendingImgData = '';
+
+function previewProductImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    pendingImgData = reader.result;
+    document.getElementById('pImagePreview').innerHTML = `<img src="${pendingImgData}" class="w-20 h-20 object-cover rounded-lg border border-gray-200">`;
+  };
+  reader.readAsDataURL(file);
+}
+
 function handleAddProduct(e) {
   e.preventDefault();
-  const name = document.getElementById('productName').value.trim();
-  const price = parseInt(document.getElementById('price').value, 10);
-  const stock = parseInt(document.getElementById('stock').value, 10);
-  const category = document.getElementById('category').value;
-  const desc = document.getElementById('description').value.trim();
+  const name = document.getElementById('pName').value.trim();
+  const price = parseInt(document.getElementById('pPrice').value, 10);
+  const stock = parseInt(document.getElementById('pStock').value, 10);
+  const category = document.getElementById('pCategory').value;
+  const desc = document.getElementById('pDesc').value.trim();
 
   if (!name || !category || !desc || isNaN(price) || isNaN(stock)) {
     alert('Please fill in every field.');
     return false;
   }
 
-  const id = 'NM-CUSTOM-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+  const id = 'NM-CUSTOM-' + Date.now();
   const product = {
     Product_Id: id,
     Product_Name: name,
@@ -160,62 +450,57 @@ function handleAddProduct(e) {
     Product_Description: desc,
     Product_Price: price,
     Product_Stock: stock,
-    Product_Image_url: pendingImageDataUrl || ('https://picsum.photos/seed/' + encodeURIComponent(name) + '/400/300'),
+    Product_Image_url: pendingImgData || ('https://picsum.photos/seed/' + encodeURIComponent(name) + '/400/300'),
     Product_Tags: 'new,custom'
   };
+  
   addCustomProduct(product);
-
-  alert('✅ Product added: ' + name);
+  alert('✅ Product added successfully!');
+  
+  // Reset form
   document.getElementById('productForm').reset();
-  document.getElementById('imagePreview').innerHTML = '';
-  pendingImageDataUrl = '';
-  renderList();
+  document.getElementById('pImagePreview').innerHTML = '';
+  pendingImgData = '';
+  
+  switchView('products');
   return false;
 }
 
-/* List */
-function renderList() {
-  const arr = loadCustomProducts();
-  const count = document.getElementById('count');
-  if (count) count.textContent = arr.length;
+/* ---------- Mobile Sidebar ---------- */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
 
-  const list = document.getElementById('list');
-  if (!list) return;
-
-  if (arr.length === 0) {
-    list.innerHTML = '<p class="text-gray-500 italic text-sm py-4 text-center">No custom products yet. Add one above.</p>';
-    return;
-  }
-
-  list.innerHTML = arr.map(p => `
-    <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
-      <img src="${escapeHtml(p.Product_Image_url)}" alt="${escapeHtml(p.Product_Name)}"
-           class="w-14 h-14 object-cover rounded-lg bg-white border border-gray-200">
-      <div class="flex-1 min-w-0">
-        <div class="font-semibold text-gray-900 text-sm truncate">${escapeHtml(p.Product_Name)}</div>
-        <div class="text-xs text-gray-500 truncate">${escapeHtml(p.Product_Category)} · ${fmt(p.Product_Price)} · Stock ${p.Product_Stock}</div>
-      </div>
-      <button onclick="deleteProduct('${p.Product_Id}')"
-              class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-xs font-semibold">
-        <i class="fas fa-trash"></i> Delete
-      </button>
-    </div>
-  `).join('');
+function openSidebar() {
+  sidebar.classList.remove('-translate-x-full');
+  overlay.classList.remove('hidden');
+}
+function closeSidebar() {
+  sidebar.classList.add('-translate-x-full');
+  overlay.classList.add('hidden');
 }
 
-function deleteProduct(id) {
-  if (!confirm('Delete this product?')) return;
-  removeCustomProduct(id);
-  renderList();
-}
+document.getElementById('menuBtn').addEventListener('click', openSidebar);
+overlay.addEventListener('click', closeSidebar);
 
-/* Logout */
+/* ---------- Logout ---------- */
 document.getElementById('logoutBtn').addEventListener('click', () => {
   sessionStorage.removeItem('nm_auth');
   window.location.href = 'index.html';
 });
 
-renderList();
+/* ---------- Init ---------- */
+// Populate categories dropdown
+const catSel = document.getElementById('pCategory');
+CATEGORIES.forEach(c => {
+  const opt = document.createElement('option');
+  opt.value = c;
+  opt.textContent = c;
+  catSel.appendChild(opt);
+});
+
+// Boot
+switchView('dashboard');
+if (window.lucide) lucide.createIcons();
 </script>
 </body>
 </html>
