@@ -5,7 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Account | Noble Market</title>
   <link rel="icon" type="image/jpg" href="Noble's logo.jpg">
-  <link rel="stylesheet" href="assets/index.css">
+  <!-- Using Tailwind CDN since you don't have assets/index.css -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1d293d',
+            'primary-light': '#24364f',
+            secondary: '#3b82f6',
+            third: '#f63b3b',
+          }
+        }
+      }
+    };
+  </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -165,10 +180,30 @@ function handleSignUp(e) {
 
   if (getUser()) return showError('An account already exists on this device. Please sign in.');
 
-  const user = { fname, lname, email, phone, pass, city: '', address: '' };
-  localStorage.setItem('nm_user', JSON.stringify(user));
-  sessionStorage.setItem('nm_auth', 'true');
+  // 1. Create the new user object with metadata for the admin
+  const newUser = { 
+    id: Date.now().toString(),
+    fname, 
+    lname, 
+    email, 
+    phone, 
+    pass, 
+    city: '', 
+    address: '',
+    joined: new Date().toISOString(),
+    role: 'Customer'
+  };
 
+  // 2. Save as the current logged-in user
+  localStorage.setItem('nm_user', JSON.stringify(newUser));
+  
+  // 3. Add to the global list for the Admin dashboard
+  const allUsers = getAllUsers();
+  allUsers.push(newUser);
+  saveAllUsers(allUsers);
+
+  // 4. Log in and redirect
+  sessionStorage.setItem('nm_auth', 'true');
   window.location.href = 'index.html';
   return false;
 }
