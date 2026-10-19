@@ -20,38 +20,48 @@
       }
     };
   </script>
-  <!-- Lucide icons — same icon set umukamezi.com uses -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    /* Custom scrollbar for sidebar and main content */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    
+    .nav-active {
+      background-color: #eff6ff; /* blue-50 */
+      color: #1d4ed8; /* blue-700 */
+      border-right: 3px solid #1d4ed8;
+    }
+  </style>
 </head>
 <body class="bg-gray-50">
 
-<div class="flex h-screen bg-gray-50">
+<div class="flex h-screen bg-gray-50 overflow-hidden">
 
   <!-- ══════════════════════ SIDEBAR ══════════════════════ -->
   <aside id="sidebar"
-         class="fixed lg:static top-0 left-0 h-full w-64 bg-white border-r border-gray-200 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
+         class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col flex-shrink-0">
 
     <!-- Logo -->
     <a href="index.html" class="flex items-center gap-2 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors">
-      <img src="Noble's logo.jpg" alt="Noble Market"
-           class="h-9 w-9 rounded object-cover flex-shrink-0"
-           onerror="this.style.display='none'">
+      <img src="Noble's logo.jpg" alt="Noble Market" class="h-9 w-9 rounded object-cover flex-shrink-0" onerror="this.style.display='none'">
       <span class="font-bold text-primary tracking-tight uppercase text-sm">Noble Market</span>
     </a>
 
-    <!-- User -->
+    <!-- User block -->
     <div class="p-6 border-b border-gray-200 flex items-center gap-3">
-      <div id="userAvatar"
-           class="h-9 w-9 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm flex-shrink-0 overflow-hidden">
-        <i data-lucide="user" class="w-4 h-4"></i>
+      <div id="navAvatar" class="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+        <i data-lucide="user" id="navAvatarIcon" class="w-5 h-5 text-gray-500"></i>
+        <img id="navAvatarImg" src="" class="w-full h-full object-cover hidden">
       </div>
       <div class="min-w-0">
-        <p id="userName" class="text-sm font-semibold text-gray-900 truncate">Loading…</p>
-        <p id="userEmail" class="text-xs text-gray-500 truncate">—</p>
+        <p id="navUserName" class="text-sm font-semibold text-gray-900 truncate">Loading…</p>
+        <p id="navUserEmail" class="text-xs text-gray-500 truncate">—</p>
       </div>
     </div>
 
-    <!-- Primary nav -->
+    <!-- Nav -->
     <nav class="mt-4 flex-1 overflow-y-auto">
       <button data-view="overview" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left transition-colors border-r-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900">
         <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
@@ -97,7 +107,7 @@
   <div class="flex-1 flex flex-col overflow-hidden min-w-0">
 
     <!-- Top bar -->
-    <header class="bg-white border-b border-gray-200 px-4 py-4 flex-shrink-0">
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
           <button id="menuBtn" class="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">
@@ -117,12 +127,11 @@
       </div>
     </header>
 
-    <!-- Scrollable content -->
-    <main class="flex-1 p-6 bg-gray-50 overflow-auto">
+    <!-- Content -->
+    <main class="flex-1 p-6 bg-gray-50 overflow-y-auto">
 
       <!-- ═════════════ VIEW: OVERVIEW ═════════════ -->
       <div id="view-overview" class="space-y-6">
-
         <div class="bg-white border border-gray-200 rounded-xl p-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-1">Welcome back, <span id="welcomeName">there</span>!</h2>
           <p class="text-gray-500 text-sm">Here's a quick look at your account.</p>
@@ -160,117 +169,198 @@
       </div>
 
       <!-- ═════════════ VIEW: ORDERS ═════════════ -->
-      <div id="view-orders" class="hidden space-y-4">
-        <div class="bg-white border border-gray-200 rounded-xl p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-1">My Orders</h2>
-          <p class="text-gray-500 text-sm">Your purchase history from this device.</p>
+      <div id="view-orders" class="hidden space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Spent</p>
+            <p id="ordKpiSpent" class="text-2xl font-bold text-gray-900">RF 0</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Confirmed</p>
+            <p id="ordKpiConfirmed" class="text-2xl font-bold text-green-600">0</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">All Transactions</p>
+            <p id="ordKpiAll" class="text-2xl font-bold text-gray-900">0</p>
+          </div>
         </div>
-        <div id="ordersList" class="space-y-3"></div>
+
+        <div class="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
+          <button onclick="filterOrders('all')" id="filter-all" class="px-4 py-1.5 text-sm font-medium bg-white shadow-sm rounded-md text-gray-900">All</button>
+          <button onclick="filterOrders('done')" id="filter-done" class="px-4 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 rounded-md">Done</button>
+          <button onclick="filterOrders('pending')" id="filter-pending" class="px-4 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 rounded-md">Pending</button>
+          <button onclick="filterOrders('failed')" id="filter-failed" class="px-4 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 rounded-md">Failed</button>
+        </div>
+
+        <div id="ordersContent"></div>
       </div>
 
       <!-- ═════════════ VIEW: BILLING ═════════════ -->
-      <div id="view-billing" class="hidden space-y-4">
-        <div class="bg-white border border-gray-200 rounded-xl p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-1">Billing</h2>
-          <p class="text-gray-500 text-sm">Manage your payment method and billing address.</p>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-xl p-6 max-w-xl">
-          <form id="billingForm" class="space-y-4" onsubmit="return saveBilling(event)">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-              <input id="billName" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
-              <select id="billMethod" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-                <option value="momo">Mobile Money (MoMo / Airtel)</option>
-                <option value="banking">Bank Transfer</option>
-                <option value="card">Card</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone / Account Number</label>
-              <input id="billAccount" type="tel" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary" placeholder="078xxxxxxxx">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-              <input id="billAddress" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                <input id="billCity" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
-                <input id="billCountry" type="text" required value="Rwanda" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+      <div id="view-billing" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Left Column -->
+          <div class="space-y-6 lg:col-span-1">
+            <div class="bg-white border border-gray-200 rounded-xl p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-6">Account Information</h3>
+              <div class="space-y-5">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="mail" class="w-5 h-5 text-gray-500"></i>
+                  <div>
+                    <p class="text-xs text-gray-500">Email</p>
+                    <p class="text-sm text-gray-900" id="billInfoEmail">—</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <i data-lucide="phone" class="w-5 h-5 text-gray-500"></i>
+                  <div>
+                    <p class="text-xs text-gray-500">Phone</p>
+                    <p class="text-sm text-gray-900" id="billInfoPhone">—</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <i data-lucide="calendar" class="w-5 h-5 text-gray-500"></i>
+                  <div>
+                    <p class="text-xs text-gray-500">Member Since</p>
+                    <p class="text-sm text-gray-900" id="billInfoDate">—</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <p id="billingMsg" class="text-sm hidden"></p>
-            <button type="submit" class="px-5 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg font-medium">
-              Save Billing
-            </button>
-          </form>
+
+            <div class="bg-white border border-gray-200 rounded-xl p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Saved Billing Methods</h3>
+              <div id="savedBillingsList" class="space-y-3"></div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="lg:col-span-2">
+            <div class="bg-white border border-gray-200 rounded-xl p-8">
+              <div class="flex items-center justify-between mb-6">
+                <h3 id="billingFormTitle" class="text-lg font-semibold text-gray-900">Add Billing Method</h3>
+                <div class="flex items-center gap-4 text-sm">
+                  <span class="flex items-center gap-2 text-gray-900"><div class="w-2 h-2 rounded-full bg-[#1d293d]" id="step1Dot"></div> Payment</span>
+                  <span class="flex items-center gap-2 text-gray-400"><div class="w-2 h-2 rounded-full bg-gray-300" id="step2Dot"></div> Address</span>
+                </div>
+              </div>
+
+              <form id="billingForm" onsubmit="return saveBilling(event)">
+                <!-- STEP 1 -->
+                <div id="billingStep1" class="space-y-5">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Billing Type</label>
+                    <select id="billType" onchange="renderBillingFields()" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+                      <option value="card">Credit Card</option>
+                      <option value="phone">Phone</option>
+                      <option value="paypal">PayPal</option>
+                      <option value="bank_transfer">Bank Transfer</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+                    <input id="billFullName" type="text" required placeholder="Enter your full name" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+                  </div>
+
+                  <div id="dynamicBillingFields">
+                    <!-- Injected by JS -->
+                  </div>
+
+                  <button type="button" onclick="goToBillingStep2()" class="w-full py-3 bg-[#1d293d] text-white rounded-lg font-semibold hover:bg-[#24364f] transition-colors flex items-center justify-center gap-2 mt-4">
+                    Next Step <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                  </button>
+                </div>
+
+                <!-- STEP 2 -->
+                <div id="billingStep2" class="hidden space-y-5">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Address</label>
+                    <input id="billAddress" type="text" required placeholder="123 Main Street" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">City</label>
+                    <input id="billCity" type="text" required placeholder="City" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1.5">ZIP Code</label>
+                      <input id="billZip" type="text" placeholder="12345" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1.5">Country</label>
+                      <input id="billCountry" type="text" required value="Rwanda" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
+                    </div>
+                  </div>
+                  <div class="flex gap-4 mt-6">
+                    <button type="button" onclick="goToBillingStep1()" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+                      Previous
+                    </button>
+                    <button type="submit" class="flex-1 py-3 bg-[#1d293d] text-white rounded-lg font-semibold hover:bg-[#24364f] transition-colors">
+                      Save Billing Method
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- ═════════════ VIEW: PROFILE ═════════════ -->
-      <div id="view-profile" class="hidden space-y-4">
-        <div class="bg-white border border-gray-200 rounded-xl p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-1">Edit Profile</h2>
-          <p class="text-gray-500 text-sm">Update your personal details.</p>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-xl p-6 max-w-xl">
-          <div class="flex flex-col items-center mb-6">
+      <div id="view-profile" class="hidden max-w-2xl">
+        <div class="bg-white border border-gray-200 rounded-xl p-8">
+          <h2 class="text-xl font-semibold text-gray-900 mb-8">Edit Profile</h2>
+          
+          <div class="flex flex-col items-center mb-8">
             <div class="relative">
-              <div id="profileAvatar" class="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200">
-                <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+              <div id="profAvatarContainer" class="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
+                <i data-lucide="user" id="profAvatarIcon" class="w-10 h-10 text-gray-400"></i>
+                <img id="profAvatarImg" src="" class="w-full h-full object-cover hidden">
               </div>
-              <label class="absolute -bottom-1 -right-1 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary-light transition-colors">
-                <i data-lucide="camera" class="w-4 h-4"></i>
-                <input id="profilePicInput" type="file" accept="image/*" class="hidden" onchange="previewProfilePic(this)">
+              <label class="absolute bottom-0 right-0 bg-[#1d293d] p-2 rounded-full cursor-pointer hover:bg-[#24364f] transition-colors">
+                <i data-lucide="camera" class="w-4 h-4 text-white"></i>
+                <input id="profPicInput" type="file" accept="image/*" class="hidden" onchange="handleProfilePic(this)">
               </label>
             </div>
-            <p class="text-xs text-gray-500 mt-2">Click the camera icon to change your photo</p>
+            <p class="text-xs text-gray-500 mt-3">Click the camera icon to change your photo</p>
           </div>
 
-          <form id="profileForm" class="space-y-4" onsubmit="return saveProfile(event)">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form id="profileForm" onsubmit="return saveProfile(event)" class="space-y-5">
+            <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                <input id="profFname" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">First Name</label>
+                <input id="profFname" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                <input id="profLname" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Last Name</label>
+                <input id="profLname" type="text" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
               </div>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-              <input id="profPhone" type="tel" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary" placeholder="+250781234567">
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
+              <input id="profPhone" type="tel" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-              <input id="profEmail" type="email" class="w-full px-3 py-2.5 border border-gray-200 bg-gray-50 text-gray-500 rounded-lg text-sm cursor-not-allowed" disabled>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+              <input id="profEmail" type="email" disabled class="w-full px-3 py-2.5 border border-gray-200 bg-gray-50 rounded-lg text-sm text-gray-500 cursor-not-allowed">
             </div>
-            <p id="profileMsg" class="text-sm hidden"></p>
-            <button type="submit" class="px-5 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg font-medium">
-              Save Changes
-            </button>
+            <div class="pt-2">
+              <button type="submit" class="px-6 py-2.5 bg-[#1d293d] text-white rounded-lg font-medium hover:bg-[#24364f] transition-colors">
+                Save Changes
+              </button>
+            </div>
           </form>
         </div>
       </div>
 
       <!-- ═════════════ VIEW: WISHLIST ═════════════ -->
-      <div id="view-wishlist" class="hidden space-y-4">
-        <div class="bg-white border border-gray-200 rounded-xl p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-1">My Wishlist</h2>
-          <p class="text-gray-500 text-sm">Products you've saved for later.</p>
-        </div>
+      <div id="view-wishlist" class="hidden">
         <div class="bg-white border border-gray-200 rounded-xl p-12 text-center">
           <i data-lucide="heart" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
           <p class="text-gray-500 text-sm mb-4">Your wishlist is empty.</p>
-          <a href="index.html#/shop" class="inline-block px-5 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg font-medium text-sm">
+          <a href="index.html#/shop" class="inline-block px-5 py-2.5 bg-[#1d293d] hover:bg-[#24364f] text-white rounded-lg font-medium text-sm">
             Browse Products
           </a>
         </div>
@@ -280,108 +370,348 @@
   </div>
 </div>
 
-<!-- Floating chat button -->
-<button onclick="alert('Chat support coming soon')"
-        class="fixed bottom-4 right-4 w-14 h-14 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-800 transition-colors z-30"
-        aria-label="Chat with us">
-  <img src="Noble's logo.jpg" alt="" class="w-8 h-8 rounded-full object-cover" onerror="this.style.display='none'">
-</button>
-
 <script src="shared.js"></script>
 <script>
-/* ---------- Auth guard ---------- */
+/* ---------- 1. Auth Guard ---------- */
 if (!isLoggedIn()) {
   sessionStorage.setItem('nm_redirect', 'account.html');
   window.location.href = 'sign in.html';
 }
 
-/* ---------- Formatting ---------- */
-const fmtRF = (n) => new Intl.NumberFormat('en-RW', {
-  style: 'currency', currency: 'RWF', minimumFractionDigits: 0
-}).format(Number(n || 0));
-
-/* ---------- Bootstrap icons ---------- */
-if (window.lucide) lucide.createIcons();
-
-/* ---------- Populate user ---------- */
-const user = getUser() || {};
-const fullName = [user.fname, user.lname].filter(Boolean).join(' ') || user.name || user.email || 'Guest';
-
-document.getElementById('userName').textContent = fullName;
-document.getElementById('userEmail').textContent = user.email || user.phone || '—';
-document.getElementById('welcomeName').textContent = (user.fname || user.name || 'there');
-
-/* Avatar */
-function paintAvatar(el, src, size) {
-  el.innerHTML = '';
-  el.style.background = '#000';
-  if (src) {
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = fullName;
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.objectFit = 'cover';
-    el.appendChild(img);
-  } else {
-    el.textContent = (user.fname || user.email || 'U').charAt(0).toUpperCase();
-    el.style.display = 'flex';
-    el.style.alignItems = 'center';
-    el.style.justifyContent = 'center';
-    el.style.fontWeight = '700';
-    el.style.fontSize = size || '14px';
-  }
-}
-paintAvatar(document.getElementById('userAvatar'), user.profile_pic, '14px');
-paintAvatar(document.getElementById('profileAvatar'), user.profile_pic, '32px');
-
-/* ---------- Prefill profile form ---------- */
-document.getElementById('profFname').value = user.fname || '';
-document.getElementById('profLname').value = user.lname || '';
-document.getElementById('profPhone').value = user.phone || '';
-document.getElementById('profEmail').value = user.email || '';
-document.getElementById('billName').value = fullName;
-document.getElementById('billAddress').value = user.address || '';
-document.getElementById('billCity').value = user.city || '';
-
-/* ---------- Load orders from localStorage ---------- */
+/* ---------- 2. Data Initialization ---------- */
+let user = getUser() || {};
 let orders = [];
 try { orders = JSON.parse(localStorage.getItem('nm_orders') || '[]'); } catch {}
+let billings = [];
+try { billings = JSON.parse(localStorage.getItem('nm_billings') || '[]'); } catch {}
 
-const confirmed = orders.filter(o => o.status === 'confirmed');
-const spent = confirmed.reduce((s, o) => s + Number(o.total || 0), 0);
-
-document.getElementById('kpiSpent').textContent = fmtRF(spent);
-document.getElementById('kpiConfirmed').textContent = confirmed.length;
-document.getElementById('kpiAll').textContent = orders.length;
-
-const ordersList = document.getElementById('ordersList');
-if (orders.length === 0) {
-  ordersList.innerHTML = `
-    <div class="bg-white border border-gray-200 rounded-xl p-12 text-center">
-      <i data-lucide="shopping-bag" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
-      <p class="text-gray-500 text-sm mb-4">No orders yet.</p>
-      <a href="index.html#/shop" class="inline-block px-5 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg font-medium text-sm">
-        Browse Products
-      </a>
-    </div>`;
-} else {
-  ordersList.innerHTML = orders.map(o => `
-    <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-3">
-      <div>
-        <p class="font-mono text-xs text-gray-500">${escapeHtml(o.ref || o.id || '—')}</p>
-        <p class="text-sm font-semibold text-gray-900">${escapeHtml(o.date || '')}</p>
-        <p class="text-xs text-gray-500">${(o.items || []).length} item(s)</p>
-      </div>
-      <div class="text-right">
-        <p class="font-bold text-gray-900">${fmtRF(o.total)}</p>
-        <p class="text-xs ${o.status === 'confirmed' ? 'text-green-600' : 'text-yellow-600'} capitalize">${escapeHtml(o.status || 'pending')}</p>
-      </div>
-    </div>`).join('');
+// Fallback to current date if user just registered
+if (!user.created_at) {
+  user.created_at = new Date().toISOString();
+  localStorage.setItem('nm_user', JSON.stringify(user));
 }
-if (window.lucide) lucide.createIcons();
 
-/* ---------- View switching ---------- */
+// Formatting helper for RF
+const fmtRF = (n) => 'RF ' + Number(n || 0).toLocaleString();
+
+/* ---------- 3. Populate User Info ---------- */
+function refreshUserUI() {
+  const fullName = [user.fname, user.lname].filter(Boolean).join(' ') || user.email || 'Guest';
+  
+  // Sidebar
+  document.getElementById('navUserName').textContent = fullName;
+  document.getElementById('navUserEmail').textContent = user.email || user.phone || '—';
+  
+  // Welcome
+  document.getElementById('welcomeName').textContent = user.fname || user.lname || 'there';
+  
+  // Avatars
+  const navImg = document.getElementById('navAvatarImg');
+  const navIcon = document.getElementById('navAvatarIcon');
+  const profImg = document.getElementById('profAvatarImg');
+  const profIcon = document.getElementById('profAvatarIcon');
+  
+  if (user.profile_pic) {
+    if(navImg) { navImg.src = user.profile_pic; navImg.classList.remove('hidden'); }
+    if(navIcon) navIcon.classList.add('hidden');
+    if(profImg) { profImg.src = user.profile_pic; profImg.classList.remove('hidden'); }
+    if(profIcon) profIcon.classList.add('hidden');
+  } else {
+    if(navImg) navImg.classList.add('hidden');
+    if(navIcon) navIcon.classList.remove('hidden');
+    if(profImg) profImg.classList.add('hidden');
+    if(profIcon) profIcon.classList.remove('hidden');
+  }
+
+  // Account Info (Billing Tab)
+  document.getElementById('billInfoEmail').textContent = user.email || '—';
+  document.getElementById('billInfoPhone').textContent = user.phone || '—';
+  document.getElementById('billInfoDate').textContent = new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  // Profile Form
+  document.getElementById('profFname').value = user.fname || '';
+  document.getElementById('profLname').value = user.lname || '';
+  document.getElementById('profPhone').value = user.phone || '';
+  document.getElementById('profEmail').value = user.email || '';
+}
+
+/* ---------- 4. KPIs & Orders ---------- */
+function updateKPIs() {
+  const confirmed = orders.filter(o => o.status === 'confirmed');
+  const spent = confirmed.reduce((s, o) => s + Number(o.total || 0), 0);
+  
+  // Overview KPIs
+  document.getElementById('kpiSpent').textContent = fmtRF(spent);
+  document.getElementById('kpiConfirmed').textContent = confirmed.length;
+  document.getElementById('kpiAll').textContent = orders.length;
+  
+  // Orders Tab KPIs
+  document.getElementById('ordKpiSpent').textContent = fmtRF(spent);
+  document.getElementById('ordKpiConfirmed').textContent = confirmed.length;
+  document.getElementById('ordKpiAll').textContent = orders.length;
+}
+
+let currentFilter = 'all';
+
+function filterOrders(status) {
+  currentFilter = status;
+  
+  // Update tab classes
+  document.querySelectorAll('[id^="filter-"]').forEach(btn => {
+    btn.className = 'px-4 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 rounded-md';
+  });
+  document.getElementById('filter-' + status).className = 'px-4 py-1.5 text-sm font-medium bg-white shadow-sm rounded-md text-gray-900';
+  
+  renderOrdersList();
+}
+
+function renderOrdersList() {
+  const container = document.getElementById('ordersContent');
+  if (!container) return;
+
+  let filtered = orders;
+  if (currentFilter !== 'all') {
+    filtered = orders.filter(o => o.status === currentFilter);
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-24 bg-white rounded-xl border border-gray-200">
+        <i data-lucide="inbox" class="w-12 h-12 text-gray-300 mb-4"></i>
+        <p class="text-gray-500 mb-6">No transactions found</p>
+        <a href="index.html#/shop" class="px-6 py-2.5 bg-[#1d293d] text-white rounded-lg font-medium text-sm hover:bg-[#24364f] transition-colors">
+          Browse Products
+        </a>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-gray-50 text-gray-500 border-b border-gray-200">
+            <tr>
+              <th class="px-4 py-3 font-medium">Invoice / Date</th>
+              <th class="px-4 py-3 font-medium text-center">Items</th>
+              <th class="px-4 py-3 font-medium">Amount</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            ${filtered.map(o => `
+              <tr>
+                <td class="px-4 py-3">
+                  <div class="font-mono text-gray-800">${escapeHtml(o.ref || o.id)}</div>
+                  <div class="text-xs text-gray-500">${escapeHtml(o.date)}</div>
+                </td>
+                <td class="px-4 py-3 text-center">${o.items ? o.items.length : 0}</td>
+                <td class="px-4 py-3 font-semibold">${fmtRF(o.total)}</td>
+                <td class="px-4 py-3">
+                  <span class="inline-flex px-2 py-1 rounded-full text-xs font-medium ${o.status === 'confirmed' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'} capitalize">
+                    ${o.status || 'Pending'}
+                  </span>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+/* ---------- 5. Billing ---------- */
+let billingStep = 1;
+let pendingProfilePicData = '';
+
+function renderBillingFields() {
+  const type = document.getElementById('billType').value;
+  const box = document.getElementById('dynamicBillingFields');
+  
+  if (type === 'card') {
+    box.innerHTML = `
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Card Number</label>
+        <div class="relative">
+          <i data-lucide="credit-card" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+          <input id="billAccount" type="text" class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]" placeholder="1234 5678 9012 3456" required>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Expiry Date</label>
+          <input id="billExpiry" type="text" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]" placeholder="MM/YY" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">CVV</label>
+          <input id="billCvv" type="text" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]" placeholder="123" required>
+        </div>
+      </div>
+    `;
+  } else if (type === 'phone') {
+    box.innerHTML = `
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
+        <div class="relative">
+          <i data-lucide="phone" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+          <input id="billAccount" type="tel" class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]" placeholder="(123) 456-7890" required>
+        </div>
+      </div>
+    `;
+  } else if (type === 'paypal') {
+    box.innerHTML = `
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">PayPal Email</label>
+        <div class="relative">
+          <i data-lucide="mail" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+          <input id="billAccount" type="email" class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]" placeholder="you@example.com" required>
+        </div>
+      </div>
+    `;
+  } else if (type === 'bank_transfer') {
+    box.innerHTML = `
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Account Number</label>
+        <div class="relative">
+          <i data-lucide="credit-card" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+          <input id="billAccount" type="text" class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1d293d]" placeholder="1234567890" required>
+        </div>
+      </div>
+    `;
+  } else {
+    box.innerHTML = `<p class="text-sm text-gray-500 mb-5">For other payment methods, please contact support.</p>`;
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+function goToBillingStep2() {
+  const fullName = document.getElementById('billFullName').value.trim();
+  const account = document.getElementById('billAccount')?.value.trim();
+  
+  if (!fullName || !account) {
+    alert('Please fill in all fields.');
+    return;
+  }
+  
+  document.getElementById('billingStep1').classList.add('hidden');
+  document.getElementById('billingStep2').classList.remove('hidden');
+  document.getElementById('step1Dot').classList.replace('bg-[#1d293d]', 'bg-gray-300');
+  document.getElementById('step2Dot').classList.replace('bg-gray-300', 'bg-[#1d293d]');
+}
+
+function goToBillingStep1() {
+  document.getElementById('billingStep2').classList.add('hidden');
+  document.getElementById('billingStep1').classList.remove('hidden');
+  document.getElementById('step2Dot').classList.replace('bg-[#1d293d]', 'bg-gray-300');
+  document.getElementById('step1Dot').classList.replace('bg-gray-300', 'bg-[#1d293d]');
+}
+
+function saveBilling(e) {
+  e.preventDefault();
+  const fullName = document.getElementById('billFullName').value.trim();
+  const type = document.getElementById('billType').value;
+  const account = document.getElementById('billAccount')?.value.trim() || '';
+  const address = document.getElementById('billAddress').value.trim();
+  const city = document.getElementById('billCity').value.trim();
+  const zip = document.getElementById('billZip').value.trim();
+  const country = document.getElementById('billCountry').value.trim();
+
+  const newBilling = {
+    id: Date.now().toString(),
+    type,
+    fullName,
+    account,
+    address,
+    city,
+    zip,
+    country
+  };
+
+  billings.push(newBilling);
+  localStorage.setItem('nm_billings', JSON.stringify(billings));
+  
+  renderBillingList();
+  resetBillingForm();
+  alert('✅ Billing method saved.');
+  return false;
+}
+
+function resetBillingForm() {
+  document.getElementById('billingForm').reset();
+  document.getElementById('billCountry').value = 'Rwanda';
+  goToBillingStep1();
+  renderBillingFields();
+}
+
+function renderBillingList() {
+  const list = document.getElementById('savedBillingsList');
+  if (!list) return;
+
+  if (billings.length === 0) {
+    list.innerHTML = `<p class="text-sm text-gray-500">No saved billing methods.</p>`;
+    return;
+  }
+
+  list.innerHTML = billings.map(b => `
+    <div class="bg-gray-50 rounded-lg p-4 border border-gray-100 relative group">
+      <div class="flex justify-between items-start">
+        <div class="min-w-0">
+          <p class="font-medium text-gray-900 text-sm truncate">${escapeHtml(b.fullName)}</p>
+          <p class="text-xs text-gray-500 capitalize">${escapeHtml(b.type)}</p>
+          <p class="text-xs text-gray-500 mt-1">${escapeHtml(b.account)}</p>
+          <p class="text-xs text-gray-500 mt-1">${escapeHtml(b.city)}${b.country ? ', ' + escapeHtml(b.country) : ''}</p>
+        </div>
+        <div class="flex gap-2 flex-shrink-0 ml-2">
+          <button onclick="deleteBilling('${b.id}')" class="text-red-500 hover:text-red-700 transition-colors p-1" title="Delete">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  if (window.lucide) lucide.createIcons();
+}
+
+function deleteBilling(id) {
+  if (!confirm('Remove this billing method?')) return;
+  billings = billings.filter(b => b.id !== id);
+  localStorage.setItem('nm_billings', JSON.stringify(billings));
+  renderBillingList();
+}
+
+/* ---------- 6. Profile Form ---------- */
+function handleProfilePic(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    pendingProfilePicData = reader.result;
+    const img = document.getElementById('profAvatarImg');
+    const icon = document.getElementById('profAvatarIcon');
+    img.src = pendingProfilePicData;
+    img.classList.remove('hidden');
+    icon.classList.add('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveProfile(e) {
+  e.preventDefault();
+  user.fname = document.getElementById('profFname').value.trim();
+  user.lname = document.getElementById('profLname').value.trim();
+  user.phone = document.getElementById('profPhone').value.trim();
+  
+  if (pendingProfilePicData) {
+    user.profile_pic = pendingProfilePicData;
+  }
+
+  localStorage.setItem('nm_user', JSON.stringify(user));
+  refreshUserUI();
+  alert('✅ Profile updated successfully.');
+  return false;
+}
+
+/* ---------- 7. View Switching ---------- */
 const VIEWS = ['overview', 'orders', 'billing', 'profile', 'wishlist'];
 const TITLES = {
   overview: 'Overview',
@@ -395,29 +725,38 @@ function switchView(name) {
   if (!VIEWS.includes(name)) name = 'overview';
 
   VIEWS.forEach(v => {
-    document.getElementById('view-' + v).classList.toggle('hidden', v !== name);
+    document.getElementById('view-' + v).classList.add('hidden');
   });
+  document.getElementById('view-' + name).classList.remove('hidden');
 
   document.querySelectorAll('.nav-btn').forEach(btn => {
     const active = btn.dataset.view === name;
-    btn.classList.toggle('bg-blue-50', active);
-    btn.classList.toggle('text-blue-700', active);
-    btn.classList.toggle('border-blue-600', active);
+    btn.classList.toggle('nav-active', active);
     btn.classList.toggle('text-gray-600', !active);
-    btn.classList.toggle('border-transparent', !active);
+    btn.classList.toggle('hover:bg-gray-50', !active);
   });
 
-  document.getElementById('pageTitle').textContent = TITLES[name] || 'Overview';
+  document.getElementById('pageTitle').textContent = TITLES[name];
+  
+  if (name === 'orders') {
+    updateKPIs();
+    renderOrdersList();
+  }
+  
   closeSidebar();
 }
 
-document.querySelectorAll('[data-view]').forEach(el => {
+document.querySelectorAll('.nav-btn').forEach(el => {
+  el.addEventListener('click', () => switchView(el.dataset.view));
+});
+document.querySelectorAll('.action-card').forEach(el => {
   el.addEventListener('click', () => switchView(el.dataset.view));
 });
 
-/* ---------- Mobile sidebar ---------- */
+/* ---------- 8. Mobile Sidebar ---------- */
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebarOverlay');
+
 function openSidebar() {
   sidebar.classList.remove('-translate-x-full');
   overlay.classList.remove('hidden');
@@ -426,82 +765,28 @@ function closeSidebar() {
   sidebar.classList.add('-translate-x-full');
   overlay.classList.add('hidden');
 }
+
 document.getElementById('menuBtn').addEventListener('click', openSidebar);
 overlay.addEventListener('click', closeSidebar);
 
-/* ---------- Logout ---------- */
+/* ---------- 9. Global Actions ---------- */
 document.getElementById('logoutBtn').addEventListener('click', () => {
   sessionStorage.removeItem('nm_auth');
   window.location.href = 'index.html';
 });
 
-/* ---------- Bell ---------- */
 document.getElementById('bellBtn').addEventListener('click', () => {
   alert('No new notifications.');
 });
 
-/* ---------- Profile pic preview ---------- */
-let pendingProfilePic = '';
-function previewProfilePic(input) {
-  const f = input.files && input.files[0];
-  if (!f) return;
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    pendingProfilePic = reader.result;
-    paintAvatar(document.getElementById('profileAvatar'), pendingProfilePic, '32px');
-  };
-  reader.readAsDataURL(f);
-}
-
-/* ---------- Save profile ---------- */
-function saveProfile(e) {
-  e.preventDefault();
-  const u = getUser();
-  if (!u) return false;
-
-  u.fname = document.getElementById('profFname').value.trim();
-  u.lname = document.getElementById('profLname').value.trim();
-  u.phone = document.getElementById('profPhone').value.trim();
-  if (pendingProfilePic) u.profile_pic = pendingProfilePic;
-
-  localStorage.setItem('nm_user', JSON.stringify(u));
-
-  const msg = document.getElementById('profileMsg');
-  msg.textContent = '✅ Profile updated.';
-  msg.className = 'text-sm text-green-600';
-  msg.classList.remove('hidden');
-
-  document.getElementById('userName').textContent = [u.fname, u.lname].filter(Boolean).join(' ');
-  document.getElementById('userEmail').textContent = u.email || u.phone || '—';
-  document.getElementById('welcomeName').textContent = u.fname || 'there';
-  paintAvatar(document.getElementById('userAvatar'), u.profile_pic, '14px');
-
-  setTimeout(() => msg.classList.add('hidden'), 2500);
-  return false;
-}
-
-/* ---------- Save billing ---------- */
-function saveBilling(e) {
-  e.preventDefault();
-  const u = getUser();
-  if (!u) return false;
-
-  u.address = document.getElementById('billAddress').value.trim();
-  u.city = document.getElementById('billCity').value.trim();
-  u.country = document.getElementById('billCountry').value.trim();
-  u.billing_method = document.getElementById('billMethod').value;
-  localStorage.setItem('nm_user', JSON.stringify(u));
-
-  const msg = document.getElementById('billingMsg');
-  msg.textContent = '✅ Billing details saved.';
-  msg.className = 'text-sm text-green-600';
-  msg.classList.remove('hidden');
-  setTimeout(() => msg.classList.add('hidden'), 2500);
-  return false;
-}
-
-/* ---------- Boot ---------- */
+/* ---------- 10. Boot ---------- */
+refreshUserUI();
+updateKPIs();
+renderBillingList();
+renderBillingFields();
+filterOrders('all'); // default filter
 switchView('overview');
+if (window.lucide) lucide.createIcons();
 </script>
 </body>
 </html>
