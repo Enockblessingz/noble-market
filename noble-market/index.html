@@ -165,7 +165,12 @@
 </nav>
 
 <!-- ══════════════════════ MAIN ══════════════════════ -->
-<main id="app"></main>
+<main id="app">
+  <!-- Added Loading State -->
+  <div class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+</main>
 
 <!-- ══════════════════════ CART DRAWER ══════════════════════ -->
 <aside id="cartPanel" class="fixed right-0 top-0 w-[360px] max-w-[92vw] h-screen bg-white border-l border-gray-200 shadow-2xl z-[60] flex flex-col translate-x-full transition-transform duration-300">
@@ -278,8 +283,11 @@
   </div>
 </footer>
 
-<script src="shared.js"></script>
-<script>
+<!-- IMPORTANT: Added type="module" so the imports in shared.js work -->
+<script type="module" src="shared.js"></script>
+
+<!-- IMPORTANT: Wrapped in type="module" and exposed state/render to window -->
+<script type="module">
   document.getElementById('year').textContent = new Date().getFullYear();
 
   /* ---------- Auth UI Update ---------- */
@@ -292,15 +300,14 @@
     }
   }
 
-  /* ---------- Lazy DB ---------- */
-  initDB();
-
-  const state = { route: location.hash || '#/', search: '', category: null, sort: 'newest', page: 1, perPage: 12, cart: getCart() };
+  // Expose state globally so shared.js can use it
+  window.state = { route: location.hash || '#/', search: '', category: null, sort: 'newest', page: 1, perPage: 12, cart: getCart() };
+  const state = window.state;
 
   /* ---------- Router ---------- */
   window.addEventListener('hashchange', () => { state.route = location.hash || '#/'; state.page = 1; render(); });
 
-  function render(){
+  window.render = function(){
     const r = (state.route || '#/').replace('#','');
     const app = document.getElementById('app');
     if (r === '/' || r === '') app.innerHTML = Home();
@@ -321,12 +328,11 @@
 
   /* ---------- Views ---------- */
   function Home(){
-    // We only show the product section to match the screenshot
     return ProductSection('Shop Products', 'Discover our wide range of products at unbeatable prices', 'bg-white', 12);
   }
 
   function ProductSection(title, subtitle, bgClass, count){
-    const items = applyFilters(DB).slice(0, count);
+    const items = applyFilters(window.DB || []).slice(0, count);
     return `
       <section class="py-8 ${bgClass} min-h-screen">
         <div class="max-w-full md:max-w-11/12 mx-auto px-4 sm:px-6 lg:px-8">
@@ -345,45 +351,39 @@
   }
 
   function productCard(p){
-    // Calculate discount percentage
     const discount = p.Product_Old_Price && p.Product_Old_Price > p.Product_Price 
       ? Math.round(((p.Product_Old_Price - p.Product_Price) / p.Product_Old_Price) * 100) 
       : 0;
     
-    const isNew = p.Product_Tags.includes('new');
+    // Safety check for tags
+    const tags = p.Product_Tags || [];
+    const isNew = tags.includes('new');
     
     return `
       <div class="bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col">
         
-        <!-- Image Container -->
         <div class="relative bg-gray-50 p-4 flex items-center justify-center h-48 sm:h-56">
           <img src="${p.Product_Image_url}" alt="${escapeHtml(p.Product_Name)}" loading="lazy"
                class="max-h-full w-auto object-contain group-hover:scale-105 transition-transform duration-300 mix-blend-multiply">
           
-          <!-- Badges -->
           ${discount > 0 ? `<div class="absolute top-3 left-3 bg-[#f63b3b] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">${discount}%</div>` : ''}
           ${isNew ? `<div class="absolute top-3 right-3 bg-[#10b981] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">new</div>` : ''}
         </div>
 
-        <!-- Details Container -->
         <div class="p-4 flex flex-col flex-grow">
-          <!-- Title -->
           <h3 class="text-sm font-semibold text-gray-900 line-clamp-1 mb-2">${escapeHtml(p.Product_Name)}</h3>
           
-          <!-- Prices -->
           <div class="flex items-center gap-2 mb-3">
             <span class="text-base font-bold text-gray-900">${fmt(p.Product_Price)}</span>
             ${p.Product_Old_Price ? `<span class="text-xs text-gray-400 line-through">${fmt(p.Product_Old_Price)}</span>` : ''}
           </div>
           
-          <!-- Stock Badge -->
           <div class="flex justify-end mb-3">
              <span class="bg-[#1d293d] text-white text-[11px] font-medium px-2.5 py-1 rounded-full">${p.Product_Stock} in Stock</span>
           </div>
 
-          <!-- Action Buttons -->
           <div class="flex gap-2 mt-auto">
-            <button onclick="viewProduct('${p.Product_Id}')"
+            <button onclick="viewProduct('${p.id || p.Product_Id}')"
                     class="flex-1 bg-[#eab308] hover:bg-[#ca8a04] text-white text-[11px] sm:text-xs font-semibold py-2 px-1 rounded-md flex items-center justify-center gap-1.5 transition-colors">
               <i class="fas fa-shopping-cart"></i> Shop Now
             </button>
@@ -397,7 +397,7 @@
   }
 
   function Shop(){
-    const all = applyFilters(DB);
+    const all = applyFilters(window.DB || []);
     const start = (state.page-1)*state.perPage;
     const pageItems = all.slice(start, start+state.perPage);
     const totalPages = Math.max(1, Math.ceil(all.length / state.perPage));
@@ -424,36 +424,29 @@
     const p = findProduct(id);
     if (!p) return `<section class="p-8 text-center"><p>Product not found.</p><a class="btn" href="#/shop">Back to shop</a></section>`;
     
-    // Simulate a gallery using the main image and some placeholders
     const gallery = [p.Product_Image_url, p.Product_Image_url, p.Product_Image_url, p.Product_Image_url];
     
     return `
       <section class="py-6 px-4 bg-white min-h-[80vh]">
         <div class="max-w-7xl mx-auto">
           
-          <!-- Breadcrumbs -->
           <div class="text-xs text-gray-500 mb-6 flex items-center gap-2">
             <a href="#/" class="hover:text-primary">Home</a> 
             <i class="fas fa-chevron-right text-[10px]"></i> 
-            <a href="#/shop" class="hover:text-primary">${escapeHtml(p.Product_Category.split('&')[0])}</a> 
+            <a href="#/shop" class="hover:text-primary">${escapeHtml(p.Product_Category ? p.Product_Category.split('&')[0] : 'Category')}</a> 
             <i class="fas fa-chevron-right text-[10px]"></i> 
             <span class="text-gray-900">${escapeHtml(p.Product_Name)}</span>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             
-            <!-- LEFT: Image Gallery -->
             <div>
-              <!-- Main Image Container -->
               <div class="relative bg-gray-50 rounded-xl overflow-hidden aspect-square flex items-center justify-center group border border-gray-100">
-                <!-- Badges -->
                 <div class="absolute top-4 left-4 z-10 bg-[#f63b3b] text-white text-xs font-bold px-2 py-1 rounded-full">-11%</div>
                 <div class="absolute top-4 right-4 z-10 bg-[#10b981] text-white text-xs font-bold px-2 py-1 rounded-full">new</div>
                 
-                <!-- Image -->
                 <img id="mainProductImage" src="${p.Product_Image_url}" alt="${escapeHtml(p.Product_Name)}" class="w-full h-full object-cover mix-blend-multiply">
                 
-                <!-- Arrows (Visual only for now) -->
                 <button class="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-white shadow-md rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity">
                   <i class="fas fa-chevron-left text-sm"></i>
                 </button>
@@ -461,13 +454,11 @@
                   <i class="fas fa-chevron-right text-sm"></i>
                 </button>
                 
-                <!-- Zoom Icon -->
                 <div class="absolute bottom-4 right-4 w-8 h-8 bg-white shadow-sm rounded-full flex items-center justify-center text-gray-600 cursor-pointer">
                   <i class="fas fa-expand text-xs"></i>
                 </div>
               </div>
 
-              <!-- Thumbnails -->
               <div class="flex gap-2 mt-4 overflow-x-auto pb-2">
                 ${gallery.map((img, i) => `
                   <button onclick="changeMainImage('${img}')" class="w-16 h-16 rounded-md overflow-hidden border-2 ${i === 0 ? 'border-[#1d293d]' : 'border-transparent'} flex-shrink-0 bg-gray-50">
@@ -477,9 +468,8 @@
               </div>
             </div>
 
-            <!-- RIGHT: Product Details -->
             <div class="flex flex-col">
-              <div class="text-xs text-gray-400 mb-1">SKU: ${p.Product_Id}</div>
+              <div class="text-xs text-gray-400 mb-1">SKU: ${p.id || p.Product_Id}</div>
               <h1 class="text-3xl font-bold text-gray-900 mb-2">${escapeHtml(p.Product_Name)}</h1>
               
               <div class="flex items-center gap-3 mb-2">
@@ -492,7 +482,6 @@
                 <span class="text-sm text-gray-600">${p.Product_Stock} in stock</span>
               </div>
 
-              <!-- Color -->
               <div class="mb-6">
                 <div class="text-sm font-medium text-gray-900 mb-2">Color: <span class="font-normal text-gray-500">Black</span></div>
                 <div class="flex gap-2">
@@ -501,7 +490,6 @@
                 </div>
               </div>
 
-              <!-- Quantity -->
               <div class="mb-6">
                 <div class="text-sm font-medium text-gray-900 mb-2">Quantity</div>
                 <div class="flex items-center gap-4">
@@ -514,9 +502,8 @@
                 </div>
               </div>
 
-              <!-- Actions -->
               <div class="flex gap-2 mb-6">
-                <button onclick="addToCartFromDetail('${p.Product_Id}')" class="flex-1 bg-[#1d293d] hover:bg-[#24364f] text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors">
+                <button onclick="addToCartFromDetail('${p.id || p.Product_Id}')" class="flex-1 bg-[#1d293d] hover:bg-[#24364f] text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors">
                   <i class="fas fa-shopping-cart text-sm"></i> Add to Cart
                 </button>
                 <button class="w-12 h-12 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors">
@@ -527,7 +514,6 @@
                 </button>
               </div>
 
-              <!-- Features Bar -->
               <div class="grid grid-cols-3 gap-4 py-4 border-t border-b border-gray-100">
                 <div class="flex items-center gap-2">
                   <i class="fas fa-truck text-blue-500 text-lg"></i>
@@ -555,7 +541,6 @@
             </div>
           </div>
 
-          <!-- Bottom Tabs -->
           <div class="mt-16">
             <div class="flex border-b border-gray-200 overflow-x-auto no-scrollbar">
               <button onclick="switchTab('description')" id="tab-description" class="px-6 py-3 text-sm font-medium border-b-2 border-[#1d293d] text-gray-900 whitespace-nowrap">Description</button>
@@ -568,11 +553,9 @@
             
             <div class="py-6 text-sm text-gray-600 leading-relaxed">
               <div id="content-description" class="block">
-                ${escapeHtml(p.Product_Description)}
+                ${escapeHtml(p.Product_Description || 'No description available.')}
               </div>
-              <div id="content-tutorial" class="hidden">
-                Tutorial video coming soon.
-              </div>
+              <div id="content-tutorial" class="hidden">Tutorial video coming soon.</div>
               <div id="content-features" class="hidden">
                 <ul class="list-disc pl-5 space-y-1">
                   <li>High-quality construction</li>
@@ -580,15 +563,9 @@
                   <li>Perfect for everyday use</li>
                 </ul>
               </div>
-              <div id="content-condition" class="hidden">
-                Brand New
-              </div>
-              <div id="content-warranty" class="hidden">
-                2 months manufacturer warranty included.
-              </div>
-              <div id="content-return" class="hidden">
-                Returns accepted within 7 days of delivery in original condition.
-              </div>
+              <div id="content-condition" class="hidden">Brand New</div>
+              <div id="content-warranty" class="hidden">2 months manufacturer warranty included.</div>
+              <div id="content-return" class="hidden">Returns accepted within 7 days of delivery in original condition.</div>
             </div>
           </div>
 
@@ -614,18 +591,15 @@
   window.addToCartFromDetail = function(id) {
     const qtyInput = document.getElementById('detailQty');
     const qty = qtyInput ? parseInt(qtyInput.value) : 1;
-    
     const p = findProduct(id);
     if (!p) return;
     
     const item = state.cart.find(c => c.id === id);
     if (item) item.qty += qty;
-    else state.cart.push({ id: p.Product_Id, qty: qty, name: p.Product_Name, price: p.Product_Price });
+    else state.cart.push({ id: p.id || p.Product_Id, qty: qty, name: p.Product_Name, price: p.Product_Price });
     
     saveCart(state.cart);
     renderCart();
-    
-    // Open the cart drawer
     document.getElementById('cartPanel').classList.remove('translate-x-full');
   };
 
@@ -649,7 +623,7 @@
   function FAQ(){ return `<section class="py-16 px-4 bg-white"><div class="max-w-3xl mx-auto"><h1 class="text-3xl font-bold text-primary mb-4 text-center">FAQ</h1><div class="space-y-3"><details class="bg-gray-50 rounded-xl p-4"><summary class="font-semibold cursor-pointer">How fast is delivery?</summary><p class="mt-2 text-gray-600">Most orders delivered within 45 minutes in Kigali.</p></details><details class="bg-gray-50 rounded-xl p-4"><summary class="font-semibold cursor-pointer">Can I return items?</summary><p class="mt-2 text-gray-600">Yes, within 7 days of delivery.</p></details></div></div></section>`; }
 
   /* ---------- Cart ---------- */
-  function renderCart(){
+  window.renderCart = function(){
     const count = state.cart.reduce((a,c)=>a+c.qty,0);
     const badge = document.getElementById('cartCount');
     if (badge) badge.textContent = count;
@@ -681,18 +655,21 @@
     if (!p) return;
     const item = state.cart.find(c=>c.id===id);
     if (item) item.qty++;
-    else state.cart.push({ id: p.Product_Id, qty: 1, name: p.Product_Name, price: p.Product_Price });
+    else state.cart.push({ id: p.id || p.Product_Id, qty: 1, name: p.Product_Name, price: p.Product_Price });
     saveCart(state.cart); renderCart();
   };
+  
   window.updateQty = function(id, qty){
     const item = state.cart.find(c=>c.id===id);
     if (item) item.qty = Math.max(1, qty);
     saveCart(state.cart); renderCart();
   };
+  
   window.removeFromCart = function(id){
     state.cart = state.cart.filter(c=>c.id!==id);
     saveCart(state.cart); renderCart();
   };
+  
   window.viewProduct = function(id){ location.hash = `#/product/${id}`; };
   window.selectCategory = function(c){
     state.category = c || null;
@@ -756,7 +733,6 @@
     setTimeout(() => {
       btn.disabled = false; btn.textContent = 'Pay Now';
       
-      // --- Save Order for Admin ---
       const currentUser = getUser() || { fname: 'Guest', lname: '', email: 'guest@noblemarket.rw' };
       const order = {
         ref: document.getElementById('payRef').textContent,
@@ -770,7 +746,6 @@
       const allOrders = getAllOrders();
       allOrders.unshift(order);
       saveAllOrders(allOrders);
-      // ---------------------------
 
       state.cart = []; saveCart(state.cart); renderCart();
       bd.classList.add('hidden'); pm.classList.add('hidden');
@@ -778,7 +753,11 @@
     }, 1200);
   });
 
-  render();
+  // Initialize DB, then render when data is ready
+  initDB().then(() => {
+     render();
+  });
+
 </script>
 </body>
 </html>
