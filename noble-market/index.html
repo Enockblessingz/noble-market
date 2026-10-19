@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noble Market | E-commerce</title>
+  <link rel="icon" type="image/jpg" href="Noble's logo.jpg">
+  <link rel="stylesheet" href="assets/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-slate-50">
+
+<!-- ══════════════════════ ANNOUNCEMENT BAR ══════════════════════ -->
+<div id="announcementBar" class="w-full flex items-center justify-center gap-3 px-4 py-2 relative hidden" style="background-color:#1d293d;">
+  <span id="announcementText" class="text-sm font-medium text-white text-center flex-1"></span>
+  <button onclick="this.parentElement.classList.add('hidden')" class="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white" aria-label="Dismiss">
+    <i class="fas fa-times text-xs"></i>
+  </button>
+</div>
+
+<!-- ══════════════════════ TOP BAR (xl only) ══════════════════════ -->
+<div class="bg-primary/40 border-b border-gray-200 hidden xl:block">
+  <div class="max-w-full md:max-w-11/12 mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-8 text-xs">
+      <div class="flex space-x-4">
+        <a href="#" class="text-gray-600 hover:text-gray-900">B2B, Gov, Students &amp; More</a>
+        <a href="mailto:info@noblemarket.rw" class="text-gray-600 hover:text-gray-900">info@noblemarket.rw</a>
+        <a href="#/about" class="text-gray-600 hover:text-gray-900">About Us</a>
+      </div>
+      <div class="flex items-center space-x-4 text-gray-600">
+        <span>The Professional's Source since 2020</span>
+        <a href="tel:+250790020086" class="flex cursor-pointer items-center space-x-2 hover:text-gray-900">
+          <i class="fas fa-phone text-xs"></i>
+          <span>250 790 020 086</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ MAIN HEADER ══════════════════════ -->
+<div class="bg-white border-b border-gray-200">
+  <div class="max-w-full md:max-w-11/12 mx-auto md:px-4 sm:px-6 lg:px-2">
+    <div class="flex justify-between items-center h-22">
+
+      <!-- Brand -->
+      <a href="#/" class="flex-shrink-0 cursor-pointer">
+        <div class="md:px-4 py-3">
+          <div class="flex items-center gap-3">
+            <img src="Noble's logo.jpg" alt="Noble Market"
+                 class="h-16 w-16 rounded-full object-cover border border-gray-200"
+                 onerror="this.style.display='none'">
+            <div class="hidden md:block">
+              <div class="font-extrabold text-2xl text-primary leading-tight">Noble Market</div>
+              <div class="text-xs text-gray-500">Fresh Products, Fast Delivery!</div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Experts -->
+      <div class="hidden xl:flex items-center space-x-3 text-sm">
+        <i class="fas fa-headset text-gray-600 text-lg"></i>
+        <div class="text-xs">
+          <div class="text-gray-600">Ask Our Experts</div>
+          <div class="font-semibold">250 790 020 086</div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="hidden md:flex flex-1 justify-end md:mx-4">
+        <div class="flex gap-2 items-center justify-end w-full">
+          <div class="relative flex-1 max-w-md">
+            <input id="search" type="text" placeholder="Search for products…"
+                   class="w-full pl-3 pr-3 py-2 text-sm border border-gray-300 rounded-sm focus:ring-1 focus:ring-blue-50 focus:border-transparent outline-none">
+          </div>
+          <button id="searchBtn"
+                  class="px-6 py-2 text-sm font-semibold rounded-sm bg-third text-white hover:bg-third/90">
+            Search
+          </button>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center space-x-6">
+        <div class="flex items-center space-x-1 gap-2">
+          <a href="#/shop" class="relative flex flex-col items-start sm:items-center cursor-pointer" aria-label="Cart">
+            <i class="fas fa-shopping-cart w-6 h-6 text-gray-600 text-xl"></i>
+            <span id="cartCount"
+                  class="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">0</span>
+            <span class="hidden sm:inline text-xs">My Cart</span>
+          </a>
+          <a href="#/shop" class="relative flex cursor-pointer flex-col items-start sm:items-center" aria-label="Wishlist">
+            <i class="fas fa-heart w-6 h-6 text-gray-600 text-xl"></i>
+            <span class="hidden sm:inline text-xs">Wishlist</span>
+          </a>
+        </div>
+
+        <a href="#/account" class="hidden sm:flex items-center space-x-2">
+          <div class="h-10 w-10 rounded-full bg-black text-white overflow-hidden flex capitalize justify-center items-center font-bold">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="text-xs hover:underline">
+            <div class="text-gray-600">Hello, Log In</div>
+            <div class="font-semibold">Account &amp; Orders</div>
+          </div>
+        </a>
+
+        <button class="xl:hidden p-2" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Menu">
+          <i class="fas fa-bars w-6 h-6 text-xl"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ NAVIGATION ══════════════════════ -->
+<nav class="bg-primary text-white relative">
+  <div class="max-w-full md:max-w-11/12 mx-auto px-4 sm:px-6 lg:px-0">
+    <div class="hidden xl:flex relative">
+      <div class="flex w-full xl:justify-between 2xl:justify-center 2xl:gap-10">
+        <a href="#/"            class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">Home</a>
+        <a href="#/shop"        class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">All Products</a>
+        <a href="#/shop"        class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">Electronics <i class="fas fa-chevron-down ml-1 text-xs"></i></a>
+        <a href="#/shop"        class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">Fashion <i class="fas fa-chevron-down ml-1 text-xs"></i></a>
+        <a href="#/shop"        class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">Home &amp; Living <i class="fas fa-chevron-down ml-1 text-xs"></i></a>
+        <a href="#/shop"        class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">Beauty <i class="fas fa-chevron-down ml-1 text-xs"></i></a>
+        <a href="#/shop"        class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">Baby &amp; Kids <i class="fas fa-chevron-down ml-1 text-xs"></i></a>
+        <a href="#/shop"        class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">Sports <i class="fas fa-chevron-down ml-1 text-xs"></i></a>
+        <a href="#/about"       class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">About Us</a>
+        <a href="#/blog"        class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">Blog</a>
+        <a href="#/contact"     class="flex items-center py-3 px-2 text-white hover:bg-slate-700 transition-colors text-sm">Contact</a>
+      </div>
+    </div>
+
+    <!-- Mobile nav -->
+    <div id="mobileMenu" class="xl:hidden hidden bg-white shadow-lg max-h-[85vh] overflow-y-auto">
+      <div class="px-4 py-2">
+        <a href="#/"        class="block px-3 py-4 text-gray-700 hover:text-green-600 hover:bg-gray-50 border-b border-gray-100">Home</a>
+        <a href="#/shop"    class="block px-3 py-4 text-gray-700 hover:text-green-600 hover:bg-gray-50 border-b border-gray-100">All Products</a>
+        <a href="#/about"   class="block px-3 py-4 text-gray-700 hover:text-green-600 hover:bg-gray-50 border-b border-gray-100">About Us</a>
+        <a href="#/contact" class="block px-3 py-4 text-gray-700 hover:text-green-600 hover:bg-gray-50 border-b border-gray-100">Contact</a>
+        <a href="#/blog"    class="block px-3 py-4 text-gray-700 hover:text-green-600 hover:bg-gray-50 border-b border-gray-100">Blog</a>
+        <a href="#/faq"     class="block px-3 py-4 text-gray-700 hover:text-green-600 hover:bg-gray-50 border-b border-gray-100">FAQ</a>
+        <a href="#/account" class="block px-3 py-4 text-gray-700 hover:text-green-600 hover:bg-gray-50">Account</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════ MAIN ══════════════════════ -->
+<main id="app"></main>
+
+<!-- ══════════════════════ CART DRAWER ══════════════════════ -->
+<aside id="cartPanel" class="fixed right-0 top-0 w-[360px] max-w-[92vw] h-screen bg-white border-l border-gray-200 shadow-2xl z-[60] flex flex-col translate-x-full transition-transform duration-300">
+  <div class="flex items-center justify-between p-4 border-b border-gray-200">
+    <strong class="text-gray-900">Your Cart</strong>
+    <button id="closeCart" class="p-2 hover:bg-gray-100 rounded-lg"><i class="fas fa-times"></i></button>
+  </div>
+  <div id="cartItems" class="flex-1 overflow-auto p-4 space-y-3"></div>
+  <div class="border-t border-gray-200 p-4 bg-white">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-gray-600">Total</span>
+      <strong id="cartTotal" class="text-lg text-primary">RWF 0</strong>
+    </div>
+    <button id="checkoutBtn" class="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-light transition-colors">Checkout</button>
+  </div>
+</aside>
+
+<!-- ══════════════════════ PAYMENT MODAL ══════════════════════ -->
+<div id="modalBackdrop" class="fixed inset-0 bg-black/50 z-[80] hidden"></div>
+<div id="paymentModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl w-[min(560px,94vw)] max-h-[92vh] overflow-auto z-[90] hidden shadow-2xl">
+  <div class="flex items-center justify-between p-4 border-b border-gray-200">
+    <strong class="text-primary">Checkout</strong>
+    <button id="closeModal" class="p-2 hover:bg-gray-100 rounded-lg"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="p-4 grid gap-2">
+    <label class="text-sm font-semibold text-gray-700">Amount (RWF)</label>
+    <input id="payAmount" type="number" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+    <label class="text-sm font-semibold text-gray-700">Description</label>
+    <input id="payDesc" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+    <p class="text-sm text-gray-500">Ref: <span id="payRef" class="font-mono"></span></p>
+    <label class="text-sm font-semibold text-gray-700">Payment method</label>
+    <select id="payMethod" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+      <option value="momo">Mobile Money (MoMo / Airtel)</option>
+      <option value="banking">Bank Transfer</option>
+      <option value="card">Card</option>
+    </select>
+    <div id="methodFields"></div>
+  </div>
+  <div class="p-4 border-t border-gray-200">
+    <button id="submitPayment" class="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-light transition-colors">Pay Now</button>
+  </div>
+</div>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer class="bg-slate-900 text-white mt-16">
+  <div class="max-w-full md:max-w-11/12 mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+      <!-- Brand -->
+      <div class="space-y-4 lg:col-span-1">
+        <div class="flex items-center gap-3">
+          <img src="Noble's logo.jpg" alt="Noble Market" class="h-16 w-16 rounded-full object-cover border border-white/20" onerror="this.style.display='none'">
+          <div class="font-extrabold text-2xl leading-tight">Noble Market</div>
+        </div>
+        <p class="text-white/80 text-sm leading-relaxed max-w-sm">
+          Your ultimate destination for premium products. We bring you the latest trends and quality items at unbeatable prices, delivered right to your doorstep.
+        </p>
+        <div class="flex items-center space-x-4 pt-2">
+          <div class="flex items-center space-x-1 text-white/60 text-xs"><i class="fas fa-shield-alt"></i><span>Secure</span></div>
+          <div class="flex items-center space-x-1 text-white/60 text-xs"><i class="fas fa-truck"></i><span>Fast Delivery</span></div>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold text-white mb-4">Quick Links</h3>
+        <ul class="space-y-3">
+          <li><a href="#/" class="text-white/80 hover:text-white text-sm">Home</a></li>
+          <li><a href="#/shop" class="text-white/80 hover:text-white text-sm">Shop</a></li>
+          <li><a href="#/about" class="text-white/80 hover:text-white text-sm">About</a></li>
+          <li><a href="#/contact" class="text-white/80 hover:text-white text-sm">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Stay Connected -->
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-semibold text-white mb-4">Stay Connected</h3>
+          <p class="text-white/80 text-sm mb-4">Subscribe to our newsletter for exclusive deals and updates.</p>
+          <div class="flex flex-col md:flex-row gap-2">
+            <input type="email" placeholder="Enter your email"
+                   class="flex-1 rounded-2xl px-3 py-2 bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/40">
+            <button class="rounded-2xl px-4 py-2 bg-white text-slate-900 font-medium hover:bg-white/90">Subscribe</button>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-sm font-medium text-white mb-3">Follow Us</h4>
+          <div class="flex space-x-3">
+            <a href="https://www.facebook.com/profile.php?id=100095097939568" target="_blank" rel="noopener" aria-label="Facebook" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors"><i class="fab fa-facebook text-sm"></i></a>
+            <a href="https://www.instagram.com/____enocks__blessingz____/" target="_blank" rel="noopener" aria-label="Instagram" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors"><i class="fab fa-instagram text-sm"></i></a>
+            <a href="https://www.tiktok.com/@yourprofile" target="_blank" rel="noopener" aria-label="TikTok" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors"><i class="fab fa-tiktok text-sm"></i></a>
+            <a href="https://x.com/BlessingzE13417" target="_blank" rel="noopener" aria-label="X" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors"><i class="fab fa-x-twitter text-sm"></i></a>
+            <a href="https://wa.me/250790020086" target="_blank" rel="noopener" aria-label="WhatsApp" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors"><i class="fab fa-whatsapp text-sm"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t border-white/10">
+    <div class="max-w-full md:max-w-11/12 mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="text-white/60 text-sm text-center sm:text-left">
+        © <span id="year">2026</span> Noble Market. All rights reserved.
+      </div>
+      <div class="text-white/60 text-xs">
+        Proudly designed by
+        <a href="https://wa.me/250790020086" target="_blank" rel="noopener" class="text-third font-bold hover:text-white">___Enock's___blessingz___</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ---------- Lazy DB ---------- */
+  initDB();
+
+  const state = { route: location.hash || '#/', search: '', category: null, sort: 'newest', page: 1, perPage: 12, cart: getCart() };
+
+  /* ---------- Router ---------- */
+  window.addEventListener('hashchange', () => { state.route = location.hash || '#/'; state.page = 1; render(); });
+
+  function render(){
+    const r = (state.route || '#/').replace('#','');
+    const app = document.getElementById('app');
+    if (r === '/' || r === '') app.innerHTML = Home();
+    else if (r.startsWith('/shop')) app.innerHTML = Shop();
+    else if (r.startsWith('/product/')) app.innerHTML = ProductDetails(r.split('/')[2]);
+    else if (r.startsWith('/account')) { window.location.href = "Noble's Log in Interface.html"; return; }
+    else if (r.startsWith('/about')) app.innerHTML = About();
+    else if (r.startsWith('/contact')) app.innerHTML = Contact();
+    else if (r.startsWith('/blog')) app.innerHTML = Blog();
+    else if (r.startsWith('/faq')) app.innerHTML = FAQ();
+    else app.innerHTML = Home();
+    renderCart();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ---------- Views ---------- */
+  function Home(){
+    return Hero() + CategorySection() + ProductSection('Featured Products', 'Our handpicked selection of premium items just for you', 'bg-white', 8)
+           + ProductSection('Top Picks', 'Our customers\' top picks just for you', 'bg-gray-100', 8)
+           + ProductSection('Latest Products', 'Don\'t miss out on our newest arrivals', 'bg-slate-100', 8);
+  }
+
+  function Hero(){
+    return `
+      <section class="bg-primary/90 min-h-[560px] relative overflow-hidden justify-center items-center flex">
+        <div class="absolute inset-0">
+          <img src="https://picsum.photos/seed/hero/1600/800" alt="Hero" class="absolute top-0 left-0 w-full h-full object-cover object-center opacity-40">
+          <div class="absolute inset-0 bg-black/50"></div>
+        </div>
+        <div class="w-full mx-auto px-4 sm:px-6 py-12 relative z-10 max-w-7xl">
+          <div class="grid justify-center items-center text-center">
+            <div class="space-y-6 max-w-3xl mx-auto">
+              <h2 class="text-2xl sm:text-2xl md:text-4xl lg:text-5xl font-bold text-white leading-tight capitalize">Fresh Products, Fast Delivery!</h2>
+              <h3 class="text-xl sm:text-xl text-white capitalize">Shop the best of Kigali at unbeatable prices</h3>
+              <div class="pt-4">
+                <a href="#/shop" class="inline-flex items-center px-6 sm:px-8 py-3 sm:py-3 bg-primary text-white rounded-lg font-semibold text-sm hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl">
+                  Shop Now <i class="fas fa-chevron-right ml-2 w-5 h-5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>`;
+  }
+
+  const CAT_NAMES = ['Electronics & Accessories','Fashion','Baby & Kids','Fitness & Wellness','Household Items','Jewelry & Watches','Shoes & Accessories','Home Appliances','Food & Beverages','School & Office','Lights & Lighting','Sports & Entertainment','Other Products'];
+  function CategorySection(){
+    return `
+      <section class="py-16 px-4 bg-slate-100">
+        <div class="max-w-full md:max-w-7xl mx-auto">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4 uppercase">Shop by Category</h2>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto">Discover our wide range of products across different categories</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-8 mx-auto max-w-5xl">
+            ${CAT_NAMES.slice(0,6).map((c,i)=>`
+              <div class="h-full pb-5 transform scale-90 sm:scale-90 md:scale-95">
+                <a href="#/shop" onclick="selectCategory('${escapeHtml(c)}');return false;" class="block">
+                  <div class="relative group cursor-pointer h-[139px] w-fit m-auto overflow-hidden rounded-2xl p-6 transition-all duration-300 bg-slate-900/90 text-white flex flex-col">
+                    <div class="absolute inset-0 z-10 overflow-hidden">
+                      <img src="https://picsum.photos/seed/cat${i}/400/400" alt="${escapeHtml(c)}" class="w-full h-full object-contain aspect-square opacity-30">
+                      <div class="absolute inset-0 bg-slate-900/90 opacity-80"></div>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center justify-center space-y-2 flex-grow">
+                      <h3 class="text-xl font-bold">${escapeHtml(c)}</h3>
+                      <p class="text-sm opacity-80">${120 + i*40} products</p>
+                    </div>
+                  </div>
+                  <div class="text-center font-bold text-lg uppercase p-1 text-primary">${escapeHtml(c)}</div>
+                </a>
+              </div>`).join('')}
+          </div>
+        </div>
+      </section>`;
+  }
+
+  function ProductSection(title, subtitle, bgClass, count){
+    const items = applyFilters(DB).slice(0, count);
+    return `
+      <section class="py-6 ${bgClass}">
+        <div class="max-w-full md:max-w-11/12 mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-4xl uppercase font-bold text-gray-900 mb-4">${title}</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">${subtitle}</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-8 mb-12">
+            ${items.map(productCard).join('')}
+          </div>
+        </div>
+      </section>`;
+  }
+
+  function productCard(p){
+    const img = p.Product_Image_url;
+    const discount = Math.random() < 0.3 ? Math.floor(Math.random()*40)+5 : 0;
+    const isNew = Math.random() < 0.2;
+    return `
+      <div class="bg-gray-100 rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 group cursor-pointer">
+        <div class="relative overflow-hidden bg-white">
+          <img src="${img}" alt="${escapeHtml(p.Product_Name)}" loading="lazy"
+               class="w-full h-32 sm:h-36 md:h-40 lg:h-48 object-contain group-hover:scale-105 transition-transform duration-300">
+          ${discount ? `<div class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">-${discount}%</div>` : ''}
+          ${isNew ? `<div class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">new</div>` : ''}
+        </div>
+        <div class="p-3 sm:p-4 md:p-6">
+          <h3 class="text-sm sm:text-base font-semibold text-gray-900 mb-1 sm:mb-2 line-clamp-1">${escapeHtml(p.Product_Name)}</h3>
+          <div class="flex items-center justify-between mb-2 sm:mb-4">
+            <span class="text-sm sm:text-base font-bold text-gray-900">${fmt(p.Product_Price)}</span>
+          </div>
+          <div class="${p.Product_Stock < 1 ? 'bg-red-500' : 'bg-primary'} text-white px-2 py-1 rounded-full text-xs w-fit ml-auto mb-2 font-semibold">
+            ${p.Product_Stock < 1 ? 'Out of Stock' : `${p.Product_Stock} in Stock`}
+          </div>
+          <div class="flex gap-1 sm:gap-2 flex-col sm:flex-row">
+            <button onclick="viewProduct('${p.Product_Id}')"
+                    class="w-full bg-yellow-500 text-xs text-white font-semibold rounded-lg text-nowrap px-2 py-2 sm:py-3 transition-colors flex items-center justify-center gap-1 sm:gap-2">
+              <i class="fas fa-shopping-cart text-xs"></i> Shop Now
+            </button>
+            <button onclick="addToCart('${p.Product_Id}')"
+                    class="w-full py-2 sm:py-3 px-2 rounded-lg text-xs font-semibold bg-teal-600 hover:bg-primary/90 transition-colors flex items-center justify-center gap-1 sm:gap-2 text-green-100">
+              <i class="fas fa-cart-plus text-xs"></i> Add
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function Shop(){
+    const all = applyFilters(DB);
+    const start = (state.page-1)*state.perPage;
+    const pageItems = all.slice(start, start+state.perPage);
+    const totalPages = Math.max(1, Math.ceil(all.length / state.perPage));
+    return `
+      <section class="py-8 px-4 bg-slate-50 min-h-[60vh]">
+        <div class="max-w-full md:max-w-11/12 mx-auto">
+          <h1 class="text-3xl font-bold text-primary mb-2">${state.category ? escapeHtml(state.category) : 'All Products'}</h1>
+          <p class="text-gray-500 mb-6">${all.length.toLocaleString()} products found</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+            ${pageItems.map(productCard).join('')}
+          </div>
+          <div class="flex items-center justify-center gap-3 mt-10">
+            <button onclick="state.page=Math.max(1,state.page-1);render()" ${state.page<=1?'disabled':''}
+                    class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm disabled:opacity-50">Previous</button>
+            <span class="text-sm text-gray-600">Page ${state.page} of ${totalPages}</span>
+            <button onclick="state.page=Math.min(${totalPages},state.page+1);render()" ${state.page>=totalPages?'disabled':''}
+                    class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm disabled:opacity-50">Next</button>
+          </div>
+        </div>
+      </section>`;
+  }
+
+  function ProductDetails(id){
+    const p = findProduct(id);
+    if (!p) return `<section class="p-8 text-center"><p>Product not found.</p><a class="btn" href="#/shop">Back to shop</a></section>`;
+    return `
+      <section class="py-10 px-4 bg-white">
+        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+          <div class="bg-gray-100 rounded-2xl overflow-hidden">
+            <img src="${p.Product_Image_url}" alt="${escapeHtml(p.Product_Name)}" class="w-full h-[400px] object-contain">
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold text-primary mb-2">${escapeHtml(p.Product_Name)}</h1>
+            <p class="text-gray-500 mb-4">${escapeHtml(p.Product_Description)}</p>
+            <div class="text-3xl font-bold text-third mb-4">${fmt(p.Product_Price)}</div>
+            <div class="text-sm text-gray-600 mb-6">Stock: ${p.Product_Stock} units</div>
+            <button onclick="addToCart('${p.Product_Id}')" class="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-light">Add to cart</button>
+          </div>
+        </div>
+      </section>`;
+  }
+
+  function About(){ return `<section class="py-16 px-4 bg-white"><div class="max-w-3xl mx-auto text-center"><h1 class="text-3xl font-bold text-primary mb-4">About Noble Market</h1><p class="text-gray-600 leading-relaxed">We are a Rwanda-based marketplace dedicated to providing quality products at fair prices, delivering excellent customer service, and building lasting relationships based on trust and integrity.</p></div></section>`; }
+  function Contact(){ return `<section class="py-16 px-4 bg-white"><div class="max-w-3xl mx-auto"><h1 class="text-3xl font-bold text-primary mb-4 text-center">Contact Us</h1><div class="bg-gray-50 rounded-2xl p-8"><p class="mb-2"><strong>Address:</strong> KK 503 Road, Masaka, Kicukiro, Kigali, Rwanda</p><p class="mb-2"><strong>Phone:</strong> +250 790 020 086</p><p><strong>Email:</strong> info@noblemarket.rw</p></div></div></section>`; }
+  function Blog(){ return `<section class="py-16 px-4 bg-white"><div class="max-w-3xl mx-auto text-center"><h1 class="text-3xl font-bold text-primary mb-4">Blog</h1><p class="text-gray-600">Coming soon.</p></div></section>`; }
+  function FAQ(){ return `<section class="py-16 px-4 bg-white"><div class="max-w-3xl mx-auto"><h1 class="text-3xl font-bold text-primary mb-4 text-center">FAQ</h1><div class="space-y-3"><details class="bg-gray-50 rounded-xl p-4"><summary class="font-semibold cursor-pointer">How fast is delivery?</summary><p class="mt-2 text-gray-600">Most orders delivered within 45 minutes in Kigali.</p></details><details class="bg-gray-50 rounded-xl p-4"><summary class="font-semibold cursor-pointer">Can I return items?</summary><p class="mt-2 text-gray-600">Yes, within 7 days of delivery.</p></details></div></div></section>`; }
+
+  /* ---------- Cart ---------- */
+  function renderCart(){
+    const count = state.cart.reduce((a,c)=>a+c.qty,0);
+    const badge = document.getElementById('cartCount');
+    if (badge) badge.textContent = count;
+
+    const itemsEl = document.getElementById('cartItems');
+    if (!itemsEl) return;
+    if (state.cart.length === 0) {
+      itemsEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Your cart is empty.</p>';
+    } else {
+      itemsEl.innerHTML = state.cart.map(c => `
+        <div class="flex items-start gap-2 border-b border-gray-100 pb-3">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-semibold text-gray-900 truncate">${escapeHtml(c.name)}</div>
+            <div class="text-xs text-gray-500">${fmt(c.price)} × ${c.qty}</div>
+          </div>
+          <div class="flex gap-1">
+            <button onclick="updateQty('${c.id}', ${Math.max(1,c.qty-1)})" class="w-6 h-6 rounded border border-gray-300 text-xs">−</button>
+            <button onclick="updateQty('${c.id}', ${c.qty+1})" class="w-6 h-6 rounded border border-gray-300 text-xs">+</button>
+            <button onclick="removeFromCart('${c.id}')" class="w-6 h-6 rounded border border-gray-300 text-xs text-red-500">✕</button>
+          </div>
+        </div>`).join('');
+    }
+    const totalEl = document.getElementById('cartTotal');
+    if (totalEl) totalEl.textContent = fmt(cartTotal(state.cart));
+  }
+
+  window.addToCart = function(id){
+    const p = findProduct(id);
+    if (!p) return;
+    const item = state.cart.find(c=>c.id===id);
+    if (item) item.qty++;
+    else state.cart.push({ id: p.Product_Id, qty: 1, name: p.Product_Name, price: p.Product_Price });
+    saveCart(state.cart); renderCart();
+  };
+  window.updateQty = function(id, qty){
+    const item = state.cart.find(c=>c.id===id);
+    if (item) item.qty = Math.max(1, qty);
+    saveCart(state.cart); renderCart();
+  };
+  window.removeFromCart = function(id){
+    state.cart = state.cart.filter(c=>c.id!==id);
+    saveCart(state.cart); renderCart();
+  };
+  window.viewProduct = function(id){ location.hash = `#/product/${id}`; };
+  window.selectCategory = function(c){
+    state.category = c || null;
+    location.hash = '#/shop';
+  };
+
+  /* ---------- Search ---------- */
+  document.getElementById('searchBtn').addEventListener('click', () => {
+    state.search = document.getElementById('search').value;
+    location.hash = '#/shop';
+  });
+  document.getElementById('search').addEventListener('keypress', e => {
+    if (e.key === 'Enter') document.getElementById('searchBtn').click();
+  });
+
+  /* ---------- Cart drawer ---------- */
+  document.getElementById('cartCount').parentElement.addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('cartPanel').classList.remove('translate-x-full');
+  });
+  document.getElementById('closeCart').addEventListener('click', () => {
+    document.getElementById('cartPanel').classList.add('translate-x-full');
+  });
+
+  /* ---------- Checkout modal ---------- */
+  const bd = document.getElementById('modalBackdrop');
+  const pm = document.getElementById('paymentModal');
+  document.getElementById('checkoutBtn').addEventListener('click', () => {
+    if (state.cart.length === 0) return alert('Your cart is empty.');
+    document.getElementById('payAmount').value = cartTotal(state.cart);
+    document.getElementById('payDesc').value = 'Noble Market Order';
+    document.getElementById('payRef').textContent = 'NM-REF-' + Math.random().toString(36).slice(2,8).toUpperCase();
+    renderMethodFields();
+    bd.classList.remove('hidden'); pm.classList.remove('hidden');
+  });
+  document.getElementById('closeModal').addEventListener('click', () => {
+    bd.classList.add('hidden'); pm.classList.add('hidden');
+  });
+  bd.addEventListener('click', () => { bd.classList.add('hidden'); pm.classList.add('hidden'); });
+
+  function renderMethodFields(){
+    const m = document.getElementById('payMethod').value;
+    const box = document.getElementById('methodFields');
+    if (m === 'momo') box.innerHTML = '<input id="momoPhone" type="tel" placeholder="078xxxxxxxx" class="w-full px-3 py-2 border border-gray-300 rounded-lg mt-2">';
+    else if (m === 'banking') box.innerHTML = '<input id="bankAccount" type="tel" placeholder="Bank account number" class="w-full px-3 py-2 border border-gray-300 rounded-lg mt-2">';
+    else box.innerHTML = '<input id="cardNumber" type="tel" placeholder="Card number" class="w-full px-3 py-2 border border-gray-300 rounded-lg mt-2">';
+  }
+  document.getElementById('payMethod').addEventListener('change', renderMethodFields);
+
+  document.getElementById('submitPayment').addEventListener('click', () => {
+    const m = document.getElementById('payMethod').value;
+    let ok = false;
+    if (m === 'momo') { const v = (document.getElementById('momoPhone')?.value||'').replace(/\D/g,''); ok = /^\d{10}$/.test(v); }
+    else if (m === 'banking') { const v = (document.getElementById('bankAccount')?.value||'').replace(/\D/g,''); ok = /^\d{8,20}$/.test(v); }
+    else { const v = (document.getElementById('cardNumber')?.value||'').replace(/\D/g,''); ok = /^\d{13,19}$/.test(v); }
+    if (!ok) return alert('❌ Please enter valid payment details.');
+    const btn = document.getElementById('submitPayment');
+    btn.disabled = true; btn.textContent = 'Processing…';
+    setTimeout(() => {
+      btn.disabled = false; btn.textContent = 'Pay Now';
+      state.cart = []; saveCart(state.cart); renderCart();
+      bd.classList.add('hidden'); pm.classList.add('hidden');
+      alert('✅ Purchase successful!\nRef: ' + document.getElementById('payRef').textContent);
+    }, 1200);
+  });
+
+  render();
+</script>
+</body>
+</html>
