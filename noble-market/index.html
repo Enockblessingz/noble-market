@@ -5,7 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Noble Market | E-commerce</title>
   <link rel="icon" type="image/jpg" href="Noble's logo.jpg">
-  <link rel="stylesheet" href="assets/index.css">
+  <!-- Using Tailwind CDN since you don't have assets/index.css -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1d293d',
+            'primary-light': '#24364f',
+            secondary: '#3b82f6',
+            third: '#f63b3b',
+          }
+        }
+      }
+    };
+  </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body class="bg-slate-50">
@@ -84,7 +99,7 @@
       <!-- Actions -->
       <div class="flex items-center space-x-6">
         <div class="flex items-center space-x-1 gap-2">
-          <a href="#/shop" class="relative flex flex-col items-start sm:items-center cursor-pointer" aria-label="Cart">
+          <a id="cartBtn" href="#/shop" class="relative flex flex-col items-start sm:items-center cursor-pointer" aria-label="Cart">
             <i class="fas fa-shopping-cart w-6 h-6 text-gray-600 text-xl"></i>
             <span id="cartCount"
                   class="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">0</span>
@@ -96,12 +111,12 @@
           </a>
         </div>
 
-        <a href="#/account" class="hidden sm:flex items-center space-x-2">
+        <a id="navAccountLink" href="sign in.html" class="hidden sm:flex items-center space-x-2">
           <div class="h-10 w-10 rounded-full bg-black text-white overflow-hidden flex capitalize justify-center items-center font-bold">
             <i class="fas fa-user"></i>
           </div>
           <div class="text-xs hover:underline">
-            <div class="text-gray-600">Hello, Log In</div>
+            <div class="text-gray-600" id="navAccountGreeting">Hello, Log In</div>
             <div class="font-semibold">Account &amp; Orders</div>
           </div>
         </a>
@@ -266,6 +281,17 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
+  /* ---------- Auth UI Update ---------- */
+  // Update the header to show the user's name if logged in
+  if (isLoggedIn()) {
+    const user = getUser();
+    if (user) {
+      const greet = document.getElementById('navAccountGreeting');
+      if (greet) greet.textContent = 'Hello, ' + (user.fname || user.email || 'User');
+      document.getElementById('navAccountLink').href = 'account.html';
+    }
+  }
+
   /* ---------- Lazy DB ---------- */
   initDB();
 
@@ -280,7 +306,10 @@
     if (r === '/' || r === '') app.innerHTML = Home();
     else if (r.startsWith('/shop')) app.innerHTML = Shop();
     else if (r.startsWith('/product/')) app.innerHTML = ProductDetails(r.split('/')[2]);
-    else if (r.startsWith('/account')) { window.location.href = "Noble's Log in Interface.html"; return; }
+    else if (r.startsWith('/account')) { 
+      window.location.href = isLoggedIn() ? 'account.html' : 'sign in.html'; 
+      return; 
+    }
     else if (r.startsWith('/about')) app.innerHTML = About();
     else if (r.startsWith('/contact')) app.innerHTML = Contact();
     else if (r.startsWith('/blog')) app.innerHTML = Blog();
@@ -511,7 +540,7 @@
   });
 
   /* ---------- Cart drawer ---------- */
-  document.getElementById('cartCount').parentElement.addEventListener('click', e => {
+  document.getElementById('cartBtn').addEventListener('click', e => {
     e.preventDefault();
     document.getElementById('cartPanel').classList.remove('translate-x-full');
   });
@@ -551,13 +580,32 @@
     else if (m === 'banking') { const v = (document.getElementById('bankAccount')?.value||'').replace(/\D/g,''); ok = /^\d{8,20}$/.test(v); }
     else { const v = (document.getElementById('cardNumber')?.value||'').replace(/\D/g,''); ok = /^\d{13,19}$/.test(v); }
     if (!ok) return alert('❌ Please enter valid payment details.');
+    
     const btn = document.getElementById('submitPayment');
     btn.disabled = true; btn.textContent = 'Processing…';
+    
     setTimeout(() => {
       btn.disabled = false; btn.textContent = 'Pay Now';
+      
+      // --- Save Order for Admin ---
+      const currentUser = getUser() || { fname: 'Guest', lname: '', email: 'guest@noblemarket.rw' };
+      const order = {
+        ref: document.getElementById('payRef').textContent,
+        date: new Date().toISOString(),
+        customerName: `${currentUser.fname} ${currentUser.lname}`.trim() || 'Guest',
+        customerEmail: currentUser.email,
+        items: state.cart.map(c => ({ id: c.id, name: c.name, price: c.price, qty: c.qty })),
+        total: cartTotal(state.cart),
+        status: 'confirmed'
+      };
+      const allOrders = getAllOrders();
+      allOrders.unshift(order);
+      saveAllOrders(allOrders);
+      // ---------------------------
+
       state.cart = []; saveCart(state.cart); renderCart();
       bd.classList.add('hidden'); pm.classList.add('hidden');
-      alert('✅ Purchase successful!\nRef: ' + document.getElementById('payRef').textContent);
+      alert('✅ Purchase successful!\nRef: ' + order.ref);
     }, 1200);
   });
 
