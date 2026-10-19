@@ -128,3 +128,26 @@ function saveCart(cart) {
 function cartTotal(cart) {
   return cart.reduce((sum, c) => sum + Number(c.price || 0) * c.qty, 0);
 }
+
+/* ============================================================
+   Admin Global Data (Users & Orders)
+   Used by sign up.html, index.html, and admin.html
+   ============================================================ */
+
+/* ---------- All Users ---------- */
+function getAllUsers() {
+  try { return JSON.parse(localStorage.getItem('nm_all_users') || '[]'); }
+  catch { return []; }
+}
+function saveAllUsers(users) {
+  localStorage.setItem('nm_all_users', JSON.stringify(users));
+}
+
+/* ---------- All Orders ---------- */
+function getAllOrders() {
+  try { return JSON.parse(localStorage.getItem('nm_all_orders') || '[]'); }
+  catch { return []; }
+}
+function saveAllOrders(orders) {
+  localStorage.setItem('nm_all_orders', JSON.stringify(orders));
+}
